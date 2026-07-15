@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pgvector(map: "vector"), pgcrypto]
+}
+
+model Node {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type          String   @default("LESSON") // LESSON, CONTEXT, FEATURE
+  label         String
+  content_hash  String?
+  success_count Int      @default(0)
+  last_verified DateTime @default(now())
+  properties    String? // JSON string
+  status        String   @default("PENDING") // APPROVED, PENDING, REJECTED, ARCHIVE
+  memory_tier   String   @default("ACTIVE") // CORE, ACTIVE, COLD, ARCHIVE
+
+  // Vector fields
+  embedding      Unsupported("vector(3072)")?
+  embeddingModel String? // e.g. "gemini-text-embedding-004"
+
+  // Relations
+  tags NodeTag[]
+
+  @@index([memory_tier])
+}
+
+model Tag {
+  id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scope         String
+  name          String
+  version       String?
+  color         String  @default("#818cf8")
+  virtual_clock Int     @default(0)
+
+  // Relations
+  nodes NodeTag[]
+
+  @@unique([scope, name, version])
+}
+
+// THE COGNITIVE JUNCTION TABLE - Enables the Multiverse Relationship Model
+model NodeTag {
+  nodeId                  String   @db.Uuid
+  tagId                   String   @db.Uuid
+  accessed_at_virtual_day Int      @default(0)
+  last_accessed_at        DateTime @default(now()) // Real calendar time for backups
+
+  node Node @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([nodeId, tagId])
+}
+
+model Archive {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fromNodeId      String   @db.Uuid
+  toNodeId        String   @db.Uuid
+  reason          String?
+  similarityScore Float?
+  mergedAt        DateTime @default(now())
+}
+
+model SystemConfig {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model QueueTask {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nodeId    String   @db.Uuid
+  text      String
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model IndexerRepo {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String        @unique
+  lastSyncedAt DateTime      @default(now())
+  files        IndexerFile[]
+}
+
+model IndexerFile {
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  repoId    String            @db.Uuid
+  repo      IndexerRepo       @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  path      String
+  hash      String
+  symbols   IndexerSymbol[]
+  
+  dependencies IndexerDependency[] @relation("DependentFile")
+  dependents   IndexerDependency[] @relation("DependencyFile")
+
+  @@unique([repoId, path])
+}
+
+model IndexerSymbol {
+  id      String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fileId  String      @db.Uuid
+  name    String
+  kind    String      // 'class' | 'function' | 'variable'
+  range   String      // e.g. "1:0-15:20"
+  
+  file    IndexerFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+}
+
+model IndexerDependency {
+  id                 String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  dependentFileId    String      @db.Uuid
+  dependencyFileId   String      @db.Uuid
+  symbolName         String?     // Specific symbol imported (optional)
+
+  dependentFile      IndexerFile @relation("DependentFile", fields: [dependentFileId], references: [id], onDelete: Cascade)
+  dependencyFile     IndexerFile @relation("DependencyFile", fields: [dependencyFileId], references: [id], onDelete: Cascade)
+
+  @@index([dependentFileId])
+  @@index([dependencyFileId])
+}
+

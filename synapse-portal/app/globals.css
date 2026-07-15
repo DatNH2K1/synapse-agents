@@ -1,0 +1,402 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+@source "../components/**/*.{ts,tsx}";
+@source "../app/**/*.{ts,tsx}";
+
+@theme {
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-dashboard-bg: var(--background);
+  --color-dashboard-fg: var(--foreground);
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #020617;
+  --accent-primary: #6366f1;
+  --accent-secondary: #a855f7;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.12);
+  --chart-grid: rgba(0, 0, 0, 0.05);
+  --chart-tick: #64748b;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: rgba(0, 0, 0, 0.1);
+  --chart-cursor: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"],
+[data-theme="midnight"] {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --accent-primary: #6366f1;
+  --accent-secondary: #a855f7;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --chart-grid: rgba(255, 255, 255, 0.05);
+  --chart-tick: #94a3b8;
+  --chart-tooltip-bg: #0f172a;
+  --chart-tooltip-border: rgba(255, 255, 255, 0.1);
+  --chart-cursor: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="arctic"] {
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+  --accent-primary: #0ea5e9;
+  --accent-secondary: #6366f1;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(15, 23, 42, 0.12);
+  --chart-grid: rgba(0, 0, 0, 0.05);
+  --chart-tick: #475569;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: rgba(0, 0, 0, 0.1);
+  --chart-cursor: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="neon"] {
+  --background: #050505;
+  --foreground: #ffffff;
+  --accent-primary: #00f2ff;
+  --accent-secondary: #ff00ea;
+  --glass-bg: rgba(0, 242, 255, 0.05);
+  --glass-border: rgba(0, 242, 255, 0.2);
+  --chart-grid: rgba(0, 242, 255, 0.1);
+  --chart-tick: #00f2ff;
+  --chart-tooltip-bg: #050505;
+  --chart-tooltip-border: rgba(0, 242, 255, 0.3);
+  --chart-cursor: rgba(0, 242, 255, 0.1);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family:
+    "Outfit",
+    "Trebuchet MS",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+@utility glass {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+@utility glass-dark {
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
+}
+
+@utility text-glow {
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+input[type="range"].themed-range {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--accent-primary) 85%, transparent) 0%,
+    color-mix(in srgb, var(--accent-primary) 85%, transparent) 100%
+  );
+}
+
+input[type="range"].themed-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+input[type="range"].themed-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  margin-top: -5px;
+  background: var(--accent-primary);
+  border: 2px solid var(--background);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--accent-primary) 35%, transparent);
+}
+
+input[type="range"].themed-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+input[type="range"].themed-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--accent-primary);
+  border: 2px solid var(--background);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--accent-primary) 35%, transparent);
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+@utility animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Remove focus outline, box-shadow, and borders on Recharts charts */
+.recharts-wrapper,
+.recharts-wrapper:focus,
+.recharts-wrapper:active,
+.recharts-wrapper *:focus,
+.recharts-wrapper *:active,
+.recharts-responsive-container,
+.recharts-responsive-container:focus,
+.recharts-responsive-container:active,
+.recharts-surface,
+.recharts-surface:focus,
+.recharts-surface:active,
+.recharts-surface *:focus,
+.recharts-surface *:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ─── Landing Page 3D Effects ─────────────────────────────────────────────── */
+
+/* Aurora — animated gradient sweep across the top */
+@keyframes aurora-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.landing-aurora {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.18) 0%,
+    rgba(168, 85, 247, 0.14) 25%,
+    rgba(236, 72, 153, 0.1) 50%,
+    rgba(99, 102, 241, 0.06) 75%,
+    transparent 100%
+  );
+  background-size: 300% 300%;
+  animation: aurora-sweep 10s ease infinite;
+  filter: blur(40px);
+  border-radius: 0 0 50% 50%;
+}
+
+/* Perspective Grid — vanishing-point floor grid */
+.landing-perspective-grid {
+  background-image:
+    linear-gradient(to right, rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(600px) rotateX(55deg);
+  transform-origin: top center;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20%,
+    black 60%,
+    transparent 100%
+  );
+}
+
+/* Hero orb — large glowing sphere behind the hero text */
+@keyframes orb-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1) translateX(-50%);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.07) translateX(-50%);
+  }
+}
+
+.hero-orb-3d {
+  position: absolute;
+  left: 50%;
+  top: -80px;
+  width: 520px;
+  height: 520px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(99, 102, 241, 0.2) 35%,
+    rgba(168, 85, 247, 0.08) 65%,
+    transparent 100%
+  );
+  filter: blur(24px);
+  animation: orb-pulse 6s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* 3D scene wrapper — enables perspective for children */
+.landing-3d-scene {
+  perspective: 1200px;
+}
+
+/* Card tilt — base style; JS applies transforms directly on mousemove */
+.card-tilt {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.card-tilt:hover {
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.35);
+}
+
+/* Floating keyframe reused by any element with .animate-float */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@utility animate-float {
+  animation: float-y 5s ease-in-out infinite;
+}
+
+/* Staggered entry animation */
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-item {
+  opacity: 0;
+  animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--delay-index, 0) * 80ms);
+}
+
+/* Spotlight Card border and inner glow */
+.spotlight-card {
+  position: relative;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(99, 102, 241, 0.35),
+    rgba(168, 85, 247, 0.2) 50%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    450px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(99, 102, 241, 0.06),
+    rgba(168, 85, 247, 0.03) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+
+.spotlight-card:hover::before,
+.spotlight-card:hover::after {
+  opacity: 1;
+}
+
+/* Tactile press response */
+.press-tactile {
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.press-tactile:active {
+  transform: scale(0.96);
+}

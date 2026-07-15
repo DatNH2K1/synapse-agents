@@ -1,0 +1,52 @@
+name: synapse
+
+networks:
+  synapse:
+    name: synapse
+    driver: bridge
+
+services:
+  db:
+    image: ankane/pgvector:v0.5.1
+    container_name: synapse-db
+    ports:
+      - "${SYNAPSE_DB_PORT:-5432}:5432"
+    env_file:
+      - ../.env
+    volumes:
+      - ./.postgresql:/var/lib/postgresql/data
+    networks:
+      - synapse
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  synapse-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: synapse-portal
+    ports:
+      - "${SYNAPSE_PORTAL_PORT:-3100}:3000"
+    env_file:
+      - ../.env
+    environment:
+      - AGENT_MANIFEST_PATH=/data/manifests/agent-manifest.csv
+      - SKILL_MANIFEST_PATH=/data/manifests/skill-manifest.csv
+      - ADDITIONAL_SKILL_MANIFEST_PATH=/data/manifests/addition-skill-manifest.csv
+    volumes:
+      - ./prisma/schema.prisma:/app/prisma/schema.prisma
+      - ./prisma/migrations:/app/prisma/migrations
+      - ./prisma/seed.ts:/app/prisma/seed.ts
+      - ./.agent/manifests:/data/manifests
+    command: sh -c "npx prisma migrate deploy && node server.js"
+
+    networks:
+      - synapse
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always

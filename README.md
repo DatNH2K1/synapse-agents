@@ -90,6 +90,17 @@ To compile the raw skills and agent personas, and link them to your Antigravity 
 make link:antigravity
 ```
 
+### 4. Proactive Skill Activation in Other Repositories
+
+To proactively activate Synapse rules and skills in other repositories you work on, copy `AGENTS.example.md` to `.agents/AGENTS.md` in the root of those repositories:
+
+```bash
+mkdir -p /path/to/your/repo/.agents
+cp AGENTS.example.md /path/to/your/repo/.agents/AGENTS.md
+```
+
+This ensures that when an Antigravity agent starts in that workspace, it will automatically reference and follow the global Synapse rules/skills dynamically.
+
 ---
 
 ## 🛠️ Makefile Commands Reference

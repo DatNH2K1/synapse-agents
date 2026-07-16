@@ -2,12 +2,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-function linkPlugin(buildDir: string) {
+function linkPlugin(buildDir: string, workspaceRoot: string) {
     const home = process.env.HOME || process.env.USERPROFILE || '';
     if (!home) {
         console.error("Error: Could not determine user home directory.");
         return;
     }
+
     const globalPluginsDir = path.join(home, '.gemini', 'config', 'plugins');
     const destLink = path.join(globalPluginsDir, 'synapse-plugin');
 
@@ -35,23 +36,12 @@ function linkPlugin(buildDir: string) {
         }
     }
 
-    // Create symlink or copy as fallback
+    // Copy build folder directly as a real folder instead of creating a symlink
     try {
-        if (process.platform === 'win32') {
-            try {
-                fs.symlinkSync(buildDir, destLink, 'junction');
-                console.log(`Successfully created directory junction on Windows to ${destLink}`);
-            } catch {
-                console.warn(`Windows junction creation failed. Copying build folder as fallback...`);
-                fs.cpSync(buildDir, destLink, { recursive: true });
-                console.log(`Successfully copied build to ${destLink}`);
-            }
-        } else {
-            fs.symlinkSync(buildDir, destLink);
-            console.log(`Successfully created symlink to ${destLink}`);
-        }
+        fs.cpSync(buildDir, destLink, { recursive: true });
+        console.log(`Successfully copied build folder to ${destLink}`);
     } catch (e) {
-        console.error(`Error linking plugin:`, e);
+        console.error(`Error copying plugin to destination:`, e);
     }
 }
 
@@ -92,6 +82,7 @@ function main() {
         name: "synapse-plugin",
         version: "1.0.0",
         description: "Agent skills, rules, and Model Context Protocol (MCP) integrations for the Synapse Knowledge Portal.",
+        autoLoad: true,
         author: {
             name: "Synapse Team"
         },
@@ -229,6 +220,28 @@ function main() {
     if (fs.existsSync(srcRules)) {
         fs.cpSync(srcRules, destRules, { recursive: true });
         console.log(`Copied rules to ${destRules}`);
+
+        // Generate AGENTS.md as a master index of all individual rule files
+        const srcRulesMdPath = path.join(srcAgentsDir, 'AGENTS.md');
+        const buildRulesMdPath = path.join(buildDir, 'AGENTS.md');
+
+        // Clean up legacy rules.md files if they exist
+        const legacyRulesMd = path.join(srcPluginDir, 'rules.md');
+        const legacyAgentsRulesMd = path.join(srcAgentsDir, 'rules.md');
+        if (fs.existsSync(legacyRulesMd)) {
+            fs.unlinkSync(legacyRulesMd);
+        }
+        if (fs.existsSync(legacyAgentsRulesMd)) {
+            fs.unlinkSync(legacyAgentsRulesMd);
+        }
+
+        // Copy AGENTS.md from source to build folder if it exists
+        if (fs.existsSync(srcRulesMdPath)) {
+            fs.copyFileSync(srcRulesMdPath, buildRulesMdPath);
+            console.log(`Copied static AGENTS.md to ${buildRulesMdPath}`);
+        } else {
+            console.warn(`Warning: Static AGENTS.md not found at ${srcRulesMdPath}`);
+        }
     }
 
     // 7. Copy skills (both from .agents/skills and .agents/agents since agent personas are skills with SKILL.md)
@@ -301,7 +314,7 @@ function main() {
 
     // 10. Link to Antigravity global plugins folder if requested
     if (shouldLink) {
-        linkPlugin(buildDir);
+        linkPlugin(buildDir, workspaceRoot);
     }
 }
 

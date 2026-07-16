@@ -116,6 +116,6 @@ make link:antigravity
 
 For details about each sub-component, refer to their respective README files:
 
-- 🌐 **Web Dashboard & API:** [synapse-portal/README.md](file:///Users/user004/Documents/synapse-agents/synapse-portal/README.md)
-- 🤖 **Agent Plugin & Skills:** [synapse-plugin/README.md](file:///Users/user004/Documents/synapse-agents/synapse-plugin/README.md)
-- 🔌 **FastMCP Server:** [synapse-mcp/README.md](file:///Users/user004/Documents/synapse-agents/synapse-mcp/README.md)
+- 🌐 **Web Dashboard & API:** [Synapse Portal](./synapse-portal/README.md)
+- 🤖 **Agent Plugin & Skills:** [Synapse Plugin](./synapse-plugin/README.md)
+- 🔌 **FastMCP Server:** [Synapse Mcp](./synapse-agents/synapse-mcp/README.md)

@@ -24,7 +24,7 @@ from pathlib import Path
 
 # Add parent for core imports
 sys.path.insert(0, str(Path(__file__).parent))
-from core import search
+from core import search  # noqa: E402
 
 # Gemini API setup
 CLAUDE_ROOT = Path.home() / ".agent"

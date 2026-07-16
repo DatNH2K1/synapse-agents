@@ -30,7 +30,7 @@ function linkPlugin(buildDir: string) {
             } else {
                 fs.unlinkSync(destLink);
             }
-        } catch (e) {
+        } catch {
             fs.rmSync(destLink, { recursive: true, force: true });
         }
     }
@@ -41,7 +41,7 @@ function linkPlugin(buildDir: string) {
             try {
                 fs.symlinkSync(buildDir, destLink, 'junction');
                 console.log(`Successfully created directory junction on Windows to ${destLink}`);
-            } catch (err) {
+            } catch {
                 console.warn(`Windows junction creation failed. Copying build folder as fallback...`);
                 fs.cpSync(buildDir, destLink, { recursive: true });
                 console.log(`Successfully copied build to ${destLink}`);
@@ -127,10 +127,10 @@ function main() {
                                 execSync(`python${ver} --version`, { stdio: 'ignore' });
                                 pythonCmd = `python${ver}`;
                                 break;
-                            } catch (e) {}
+                            } catch {}
                         }
                     }
-                } catch (e) {}
+                } catch {}
                 console.log(`Using ${pythonCmd} to create virtual environment...`);
                 execSync(`${pythonCmd} -m venv .venv`, { stdio: 'inherit', cwd: srcMcpDir });
                 const pipPath = process.platform === 'win32'
@@ -193,7 +193,7 @@ function main() {
         "synapse-portal": {
             "command": pythonExe,
             "args": [
-                "synapse-mcp/synapse_mcp_server.py"
+                serverScript
             ],
             "env": {
                 "SYNAPSE_PORTAL_HOST": portalHost

@@ -425,7 +425,9 @@ ADAPTER_REGISTRY: dict[str, BaseLanguageAdapter] = {
 
 
 def write_temp_parsers(root: Path, langs: set[str]):
-    templates_dir = Path(__file__).parent.parent / "templates"
+    templates_dir = Path(__file__).parent / "templates"
+    if not templates_dir.exists():
+        templates_dir = Path(__file__).parent.parent / "templates"
     for lang in langs:
         adapter = ADAPTER_REGISTRY.get(lang)
         if adapter:

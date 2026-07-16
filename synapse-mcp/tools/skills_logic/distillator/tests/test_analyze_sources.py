@@ -12,7 +12,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from analyze_sources import (
+from analyze_sources import (  # noqa: E402
     resolve_inputs,
     detect_doc_type,
     suggest_groups,

@@ -155,6 +155,7 @@ function findClassConstReferences($nodes, &$imports) {
 function runTokenizerFallback($code, &$exports, &$imports) {
     $tokens = token_get_all($code);
     $count = count($tokens);
+    $namespace = '';
     for ($i = 0; $i < $count; $i++) {
         $token = $tokens[$i];
         if (is_array($token)) {
@@ -162,20 +163,37 @@ function runTokenizerFallback($code, &$exports, &$imports) {
             $text = $token[1];
             $line = $token[2];
 
-            if ($id === T_CLASS || $id === T_INTERFACE || (defined('T_TRAIT') && $id === T_TRAIT) || (defined('T_ENUM') && $id === T_ENUM)) {
+            if ($id === T_NAMESPACE) {
+                $nsName = '';
+                for ($j = $i + 1; $j < $count; $j++) {
+                    $t = $tokens[$j];
+                    if (is_array($t)) {
+                        if ($t[0] === T_STRING || $t[0] === T_NS_SEPARATOR || (defined('T_NAME_QUALIFIED') && $t[0] === T_NAME_QUALIFIED) || (defined('T_NAME_FULLY_QUALIFIED') && $t[0] === T_NAME_FULLY_QUALIFIED)) {
+                            $nsName .= $t[1];
+                        }
+                    } else {
+                        if ($t === ';' || $t === '{') {
+                            $i = $j;
+                            break;
+                        }
+                    }
+                }
+                $namespace = trim($nsName);
+            } elseif ($id === T_CLASS || $id === T_INTERFACE || (defined('T_TRAIT') && $id === T_TRAIT) || (defined('T_ENUM') && $id === T_ENUM)) {
                 for ($j = $i + 1; $j < $count; $j++) {
                     if (is_array($tokens[$j])) {
                         if ($tokens[$j][0] === T_STRING) {
                             $kind = "class";
                             if ($id === T_INTERFACE) {
-                                $kind = "interface";
+                                  $kind = "interface";
                             } elseif (defined('T_TRAIT') && $id === T_TRAIT) {
-                                $kind = "trait";
+                                  $kind = "trait";
                             } elseif (defined('T_ENUM') && $id === T_ENUM) {
-                                $kind = "enum";
+                                  $kind = "enum";
                             }
+                            $fullName = $namespace ? $namespace . '\\' . $tokens[$j][1] : $tokens[$j][1];
                             $exports[] = [
-                                "name" => $tokens[$j][1],
+                                "name" => $fullName,
                                 "kind" => $kind,
                                 "range" => "$line:0-" . $tokens[$j][2] . ":0"
                             ];
@@ -187,8 +205,9 @@ function runTokenizerFallback($code, &$exports, &$imports) {
                 for ($j = $i + 1; $j < $count; $j++) {
                     if (is_array($tokens[$j])) {
                         if ($tokens[$j][0] === T_STRING) {
+                            $fullName = $namespace ? $namespace . '\\' . $tokens[$j][1] : $tokens[$j][1];
                             $exports[] = [
-                                "name" => $tokens[$j][1],
+                                "name" => $fullName,
                                 "kind" => "function",
                                 "range" => "$line:0-" . $tokens[$j][2] . ":0"
                             ];

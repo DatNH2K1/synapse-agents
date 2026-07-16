@@ -14,6 +14,12 @@ describe("Repo Indexer Parser Adapters", () => {
       "../../../.agent/skills/synapse-repo-indexer/scripts/index_repo.py",
     );
   }
+  if (!fs.existsSync(indexerScript)) {
+    indexerScript = path.resolve(
+      __dirname,
+      "../../../synapse-mcp/tools/repo_indexer/index_repo.py",
+    );
+  }
 
   it("should parse JS/TS files correctly using Babel adapter", () => {
     const testFile = path.resolve(__dirname, "temp-test.ts");

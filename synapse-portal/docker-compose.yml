@@ -10,7 +10,7 @@ services:
     image: ankane/pgvector:v0.5.1
     container_name: synapse-db
     ports:
-      - "${SYNAPSE_DB_PORT:-5432}:5432"
+      - "${SYNAPSE_DB_PORT:-5000}:5432"
     env_file:
       - ../.env
     volumes:
@@ -34,14 +34,12 @@ services:
     env_file:
       - ../.env
     environment:
-      - AGENT_MANIFEST_PATH=/data/manifests/agent-manifest.csv
-      - SKILL_MANIFEST_PATH=/data/manifests/skill-manifest.csv
-      - ADDITIONAL_SKILL_MANIFEST_PATH=/data/manifests/addition-skill-manifest.csv
+      - MANIFEST_PATH=/data/manifests
     volumes:
       - ./prisma/schema.prisma:/app/prisma/schema.prisma
       - ./prisma/migrations:/app/prisma/migrations
       - ./prisma/seed.ts:/app/prisma/seed.ts
-      - ./.agent/manifests:/data/manifests
+      - ./manifests:/data/manifests
     command: sh -c "npx prisma migrate deploy && node server.js"
 
     networks:

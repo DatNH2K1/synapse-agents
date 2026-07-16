@@ -1,6 +1,8 @@
 ---
 name: synapse-agent-analyst
 description: Strategic business analyst and requirements expert. Use when the user asks to talk to Mary or requests the business analyst.
+title: Business Analyst
+icon: BarChart2
 ---
 
 # Mary

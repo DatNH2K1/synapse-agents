@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   getAIConfig,
-  AGENT_MANIFEST_PATH,
-  SKILL_MANIFEST_PATH,
-  ADDITIONAL_SKILL_MANIFEST_PATH,
+  MANIFEST_PATH,
 } from "@/lib/config";
 
 describe("lib/config", () => {
@@ -15,10 +13,8 @@ describe("lib/config", () => {
     expect(typeof config.gemini.is_active).toBe("boolean");
   });
 
-  it("should resolve manifest paths to valid non-empty strings", () => {
-    expect(typeof AGENT_MANIFEST_PATH).toBe("string");
-    expect(typeof SKILL_MANIFEST_PATH).toBe("string");
-    expect(typeof ADDITIONAL_SKILL_MANIFEST_PATH).toBe("string");
-    expect(AGENT_MANIFEST_PATH.length).toBeGreaterThan(0);
+  it("should resolve manifest path to a valid non-empty string", () => {
+    expect(typeof MANIFEST_PATH).toBe("string");
+    expect(MANIFEST_PATH.length).toBeGreaterThan(0);
   });
 });

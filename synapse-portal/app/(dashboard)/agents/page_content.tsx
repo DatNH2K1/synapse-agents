@@ -2,9 +2,19 @@
 
 import React, { useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import { Zap, X, Brain, Sliders, ShieldAlert } from "lucide-react";
+import { Zap, X, Brain, Sliders, ShieldAlert, Terminal } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import TiltCard from "@/components/landing/TiltCard";
 import Avatar from "@/components/shared/Avatar";
+
+const AgentIcon = ({ name, className, size = 20 }: { name: string; className?: string; size?: number }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const IconComponent = (LucideIcons as any)[name];
+  if (!IconComponent) {
+    return <LucideIcons.User className={className} size={size} />;
+  }
+  return <IconComponent className={className} size={size} />;
+};
 
 interface Agent {
   name: string;
@@ -35,15 +45,37 @@ interface Skill {
   path: string;
 }
 
+interface Tool {
+  name: string;
+  description: string;
+  module: string;
+  path: string;
+}
+
+interface Personal {
+  id: string;
+  displayName: string;
+  region: string;
+  description: string;
+  cultural_traits: string;
+  tech_literacy: string;
+  pain_points: string;
+}
+
 export default function AgentsPageContent({
-  agents,
-  skills,
+  agents = [],
+  skills = [],
+  tools = [],
+  personals = [],
 }: {
-  agents: Agent[];
-  skills: Skill[];
+  agents?: Agent[];
+  skills?: Skill[];
+  tools?: Tool[];
+  personals?: Personal[];
 }) {
   const { t } = useI18n();
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [selectedPersonal, setSelectedPersonal] = useState<Personal | null>(null);
   const [activeTab, setActiveTab] = useState<
     "overview" | "protocols" | "capabilities"
   >("overview");
@@ -53,6 +85,24 @@ export default function AgentsPageContent({
     setSelectedAgent(agent);
     setActiveTab("overview");
   };
+
+  const [personalSearch, setPersonalSearch] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("All");
+
+  const regions = ["All", ...Array.from(new Set(personals.map((p) => p.region).filter(Boolean)))];
+
+  const filteredPersonals = personals.filter((p) => {
+    const matchesSearch =
+      p.displayName.toLowerCase().includes(personalSearch.toLowerCase()) ||
+      p.description.toLowerCase().includes(personalSearch.toLowerCase()) ||
+      p.cultural_traits.toLowerCase().includes(personalSearch.toLowerCase()) ||
+      p.pain_points.toLowerCase().includes(personalSearch.toLowerCase()) ||
+      p.region.toLowerCase().includes(personalSearch.toLowerCase());
+
+    const matchesRegion = selectedRegion === "All" || p.region === selectedRegion;
+
+    return matchesSearch && matchesRegion;
+  });
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -82,8 +132,8 @@ export default function AgentsPageContent({
                     width={40}
                     height={40}
                   />
-                  <span className="absolute -bottom-1 -right-1 text-sm bg-dashboard-bg border border-dashboard-fg/10 rounded-full p-0.5 leading-none shadow-md">
-                    {agent.icon}
+                  <span className="absolute -bottom-1 -right-1 bg-dashboard-bg border border-dashboard-fg/10 rounded-full p-1 leading-none shadow-md flex items-center justify-center">
+                    <AgentIcon name={agent.icon} size={12} className="text-indigo-400" />
                   </span>
                 </div>
                 <div>
@@ -130,6 +180,98 @@ export default function AgentsPageContent({
         </div>
       </section>
 
+      {/* User Personas Section */}
+      <section className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <section>
+            <h2 className="text-2xl font-black tracking-tight text-dashboard-fg uppercase italic">
+              User Personas
+              <span className="text-indigo-500">.</span>
+            </h2>
+            <p className="text-xs font-medium text-slate-500">
+              Target user profiles, cultural traits, and pain points used for agent roleplay and user experience testing.
+            </p>
+          </section>
+
+          {/* Search bar */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Search personas..."
+              value={personalSearch}
+              onChange={(e) => setPersonalSearch(e.target.value)}
+              className="px-4 py-2 bg-dashboard-bg/50 border border-dashboard-fg/10 rounded-xl text-xs text-dashboard-fg focus:outline-none focus:border-indigo-500 transition-colors w-full sm:w-60"
+            />
+          </div>
+        </div>
+
+        {/* Region Filter pills */}
+        <div className="flex flex-wrap gap-1.5 pb-2 overflow-x-auto border-b border-dashboard-fg/5">
+          {regions.map((region) => (
+            <button
+              key={region}
+              onClick={() => setSelectedRegion(region)}
+              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                selectedRegion === region
+                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                  : "bg-foreground/5 text-slate-400 hover:text-dashboard-fg hover:bg-foreground/10"
+              }`}
+            >
+              {region}
+            </button>
+          ))}
+        </div>
+
+        {/* Personas Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredPersonals.map((personal, i) => (
+            <TiltCard
+              key={personal.id}
+              onClick={() => setSelectedPersonal(personal)}
+              style={{ "--delay-index": (i % 4) + 1 } as React.CSSProperties}
+              className="stagger-item group flex flex-col justify-between rounded-xl glass hover:bg-foreground/5 p-4 transition-all cursor-pointer min-h-[140px]"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-indigo-500/20 bg-dashboard-bg/50 p-0.5 shadow-md">
+                    <Avatar
+                      seed={personal.displayName}
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-dashboard-fg truncate">
+                      {personal.displayName}
+                    </h4>
+                    <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">
+                      📍 {personal.region}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                  {personal.description}
+                </p>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between border-t border-dashboard-fg/5 pt-2">
+                <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">
+                  Literacy: <span className="text-slate-400 font-semibold">{personal.tech_literacy}</span>
+                </span>
+                <span className="text-[9px] text-indigo-400 font-black group-hover:translate-x-1 transition-transform">
+                  Details →
+                </span>
+              </div>
+            </TiltCard>
+          ))}
+          {filteredPersonals.length === 0 && (
+            <div className="col-span-full py-8 text-center text-xs text-slate-500">
+              No personas match your filters.
+            </div>
+          )}
+        </div>
+      </section>
+
       <section className="space-y-8">
         <section>
           <h2 className="text-2xl font-black tracking-tight text-dashboard-fg uppercase italic">
@@ -169,6 +311,45 @@ export default function AgentsPageContent({
         </div>
       </section>
 
+      <section className="space-y-8">
+        <section>
+          <h2 className="text-2xl font-black tracking-tight text-dashboard-fg uppercase italic">
+            System Tools
+            <span className="text-purple-500">.</span>
+          </h2>
+          <p className="text-xs font-medium text-slate-500">
+            Automated tools and MCP functions exposed to the Synapse Agent network.
+          </p>
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {tools.map((tool, i) => (
+            <TiltCard
+              key={`${tool.name}-${tool.module}-${i}`}
+              style={{ "--delay-index": (i % 2) + 1 } as React.CSSProperties}
+              className="stagger-item flex items-start gap-4 rounded-xl glass hover:bg-foreground/5 p-4 transition-all"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600/10 text-purple-500">
+                <Terminal size={20} />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-dashboard-fg">
+                    {tool.name}
+                  </h4>
+                  <span className="rounded bg-foreground/5 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-tighter text-slate-500">
+                    {tool.module}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  {tool.description}
+                </p>
+              </div>
+            </TiltCard>
+          ))}
+        </div>
+      </section>
+
       {/* Details Modal */}
       {selectedAgent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
@@ -195,11 +376,11 @@ export default function AgentsPageContent({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap">
                   <h3 className="text-2xl font-black text-dashboard-fg tracking-tight uppercase">
                     {selectedAgent.displayName || selectedAgent.name}
                   </h3>
-                  <span className="text-2xl">{selectedAgent.icon}</span>
+                  <AgentIcon name={selectedAgent.icon} size={24} className="text-indigo-400" />
                 </div>
                 <p className="text-xs font-black text-indigo-400 uppercase tracking-widest mt-1">
                   {selectedAgent.title}
@@ -425,6 +606,75 @@ export default function AgentsPageContent({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Persona Details Modal */}
+      {selectedPersonal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-dashboard-bg/95 border border-dashboard-fg/10 rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col text-dashboard-fg">
+            <div className="absolute top-0 left-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
+            
+            <button
+              onClick={() => setSelectedPersonal(null)}
+              className="absolute top-6 right-6 text-dashboard-fg/60 hover:text-dashboard-fg transition-colors cursor-pointer z-10 p-1.5 rounded-full hover:bg-dashboard-fg/5"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-start gap-5 border-b border-dashboard-fg/10 pb-6 mb-6">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-indigo-500/20 bg-dashboard-bg/50 p-1 shadow-xl">
+                <Avatar
+                  seed={selectedPersonal.displayName}
+                  width={56}
+                  height={56}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-2xl font-black text-dashboard-fg tracking-tight uppercase">
+                  {selectedPersonal.displayName}
+                </h3>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <span className="rounded-md bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 text-xs font-bold text-indigo-400">
+                    📍 {selectedPersonal.region}
+                  </span>
+                  <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-400">
+                    💻 {selectedPersonal.tech_literacy} Literacy
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  About
+                </h4>
+                <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium">
+                  {selectedPersonal.description}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-1.5">
+                  🧠 Cultural Traits & Preferences
+                </h4>
+                <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium bg-indigo-500/[0.02] border-l-2 border-indigo-500/30 pl-4 py-2 rounded-r-xl">
+                  {selectedPersonal.cultural_traits}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-400 flex items-center gap-1.5">
+                  ⚠️ Pain Points
+                </h4>
+                <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium bg-rose-500/[0.02] border-l-2 border-rose-500/30 pl-4 py-2 rounded-r-xl">
+                  {selectedPersonal.pain_points}
+                </p>
+              </div>
             </div>
           </div>
         </div>

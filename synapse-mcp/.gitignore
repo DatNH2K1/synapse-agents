@@ -1,9 +1,23 @@
-# Mac
+# ==========================================
+# Operating System Files
+# ==========================================
 .DS_Store
 
-# IDE
+# ==========================================
+# IDEs and Text Editors
+# ==========================================
 .idea/
 .vscode/
 
-# Python
+# ==========================================
+# Python Virtual Environments & Caches
+# ==========================================
 .venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/

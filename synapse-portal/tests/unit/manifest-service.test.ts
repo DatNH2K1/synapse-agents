@@ -69,11 +69,7 @@ describe("ManifestService Tests", () => {
         "canonicalId,name,description,module,path\n" +
         'skill-1,"Skill Name","Description of skill",mod,path/to/skill';
 
-      vi.spyOn(fs, "existsSync").mockImplementation((p) => {
-        return (
-          typeof p === "string" && !p.includes("addition-skill-manifest.csv")
-        );
-      });
+      vi.spyOn(fs, "existsSync").mockReturnValue(true);
       vi.spyOn(fs, "readFileSync").mockReturnValue(csvData);
 
       const skills = manifestService.getSkills();

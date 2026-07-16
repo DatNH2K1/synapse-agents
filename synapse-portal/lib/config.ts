@@ -5,14 +5,14 @@ import fs from "fs";
  * Aggressive path detection for Synapse system manifests and configurations.
  * Supports both Local development and Docker container environments.
  */
-const getEffectivePath = (envVar: string, defaultRelPath: string) => {
+const getEffectiveDirectoryPath = (envVar: string, defaultRelPath: string) => {
   if (process.env[envVar]) return process.env[envVar] as string;
 
   const possiblePaths = [
     // 1. Nested in synapse-agents (Migrated Local dev structure)
-    path.join(process.cwd(), "..", "..", "synapse", defaultRelPath),
-    // 2. Sibling directory synapse
-    path.join(process.cwd(), "..", "synapse", defaultRelPath),
+    path.join(process.cwd(), "..", "..", "synapse-agents", defaultRelPath),
+    // 2. Sibling directory synapse-agents
+    path.join(process.cwd(), "..", "synapse-agents", defaultRelPath),
     // 3. Parent directory (Legacy Local dev structure)
     path.join(process.cwd(), "..", defaultRelPath),
     // 4. Current directory
@@ -22,24 +22,16 @@ const getEffectivePath = (envVar: string, defaultRelPath: string) => {
   ];
 
   for (const p of possiblePaths) {
-    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    if (fs.existsSync(p) && fs.statSync(p).isDirectory()) return p;
   }
 
   // Fallback to local dev path
   return possiblePaths[0];
 };
 
-export const AGENT_MANIFEST_PATH = getEffectivePath(
-  "AGENT_MANIFEST_PATH",
-  ".agent/manifests/agent-manifest.csv",
-);
-export const SKILL_MANIFEST_PATH = getEffectivePath(
-  "SKILL_MANIFEST_PATH",
-  ".agent/manifests/skill-manifest.csv",
-);
-export const ADDITIONAL_SKILL_MANIFEST_PATH = getEffectivePath(
-  "ADDITIONAL_SKILL_MANIFEST_PATH",
-  ".agent/manifests/addition-skill-manifest.csv",
+export const MANIFEST_PATH = getEffectiveDirectoryPath(
+  "MANIFEST_PATH",
+  "manifests",
 );
 
 export const DB_CONFIG = {

@@ -34,6 +34,23 @@ interface Skill {
   path: string;
 }
 
+interface Tool {
+  name: string;
+  description: string;
+  module: string;
+  path: string;
+}
+
+interface Personal {
+  id: string;
+  displayName: string;
+  region: string;
+  description: string;
+  cultural_traits: string;
+  tech_literacy: string;
+  pain_points: string;
+}
+
 function parseSkillMd(skillPath: string) {
   try {
     const possiblePaths = [
@@ -194,10 +211,43 @@ export default function AgentsPage() {
     console.error("Failed to load skills", e);
   }
 
+  // Parse Tools
+  let tools: Tool[] = [];
+  try {
+    const rawTools = manifestService.getTools();
+    tools = rawTools.map((t) => ({
+      name: t.name,
+      description: t.description,
+      module: t.module,
+      path: t.path,
+    }));
+  } catch (e) {
+    console.error("Failed to load tools", e);
+  }
+
+  // Parse Personals
+  let personals: Personal[] = [];
+  try {
+    const rawPersonals = manifestService.getPersonals();
+    personals = rawPersonals.map((p) => ({
+      id: p.id,
+      displayName: p.displayName,
+      region: p.region,
+      description: p.description,
+      cultural_traits: p.cultural_traits,
+      tech_literacy: p.tech_literacy,
+      pain_points: p.pain_points,
+    }));
+  } catch (e) {
+    console.error("Failed to load personals", e);
+  }
+
   return (
     <AgentsPageContent
       agents={JSON.parse(JSON.stringify(agents))}
       skills={JSON.parse(JSON.stringify(skills))}
+      tools={JSON.parse(JSON.stringify(tools))}
+      personals={JSON.parse(JSON.stringify(personals))}
     />
   );
 }

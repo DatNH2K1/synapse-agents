@@ -24,27 +24,55 @@ This directory contains the Model Context Protocol (MCP) server for the **Synaps
 
 ## Configuration
 
-Since MCP clients run outside the `synapse-mcp` directory context, you must use **absolute paths** to point to the server Python file and the virtual environment's Python executable.
+Depending on the MCP client you are using, you can configure the server using relative or absolute paths:
+
+- **Workspace-Scoped (Antigravity & Codex)**: Supports **relative paths** pointing directly from the workspace root folder.
+- **Global / External Clients (Claude Desktop)**: Requires **absolute paths** since the execution context is outside of this repository workspace.
+
+### 1. Antigravity & Codex (Workspace-Scoped - Recommended)
+
+Antigravity and Codex support workspace-scoped configuration. The build script automatically generates this file at `.agents/mcp_config.json` with relative paths:
+
+```json
+{
+  "mcpServers": {
+    "synapse-portal": {
+      "command": "synapse-mcp/.venv/bin/python",
+      "args": ["synapse-mcp/synapse_mcp_server.py"],
+      "env": {
+        "SYNAPSE_PORTAL_HOST": "http://localhost:3100",
+        "CONTEXT7_API_KEY": "<your-context7-api-key>"
+      }
+    }
+  }
+}
+```
+
+_Note: On Windows, the python path is `synapse-mcp/.venv/Scripts/python.exe`._
+
+---
+
+### 2. Claude Desktop & Global Configurations (Requires Absolute Paths)
+
+To configure the server globally or in Claude Desktop, you must use **absolute paths**.
 
 To get the absolute path of your workspace parent folder:
-1. Open a terminal at the project root (`synapse` folder).
-2. Run:
-   ```bash
-   pwd
-   ```
-3. Copy the output path.
-4. Replace `/<path-to-your-workspace>/synapse` with the copied path in the configurations below (i.e. replacing `/<path-to-your-workspace>/` with the parent directory path of `synapse`).
 
-### 1. Claude Desktop
+1. Open a terminal at the project root (`synapse-agents` folder).
+2. Run `pwd` to get the path.
+3. Replace `/<path-to-your-workspace>/synapse-agents` in the blocks below with your absolute repository path.
+
+#### Claude Desktop Configuration
+
 Add this block to your `claude_desktop_config.json` (typically at `~/Library/Application Support/Claude/claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "synapse-portal": {
-      "command": "/<path-to-your-workspace>/synapse/synapse-mcp/.venv/bin/python",
+      "command": "/<path-to-your-workspace>/synapse-agents/synapse-mcp/.venv/bin/python",
       "args": [
-        "/<path-to-your-workspace>/synapse/synapse-mcp/synapse_mcp_server.py"
+        "/<path-to-your-workspace>/synapse-agents/synapse-mcp/synapse_mcp_server.py"
       ],
       "env": {
         "SYNAPSE_PORTAL_HOST": "http://localhost:3100",
@@ -55,36 +83,15 @@ Add this block to your `claude_desktop_config.json` (typically at `~/Library/App
 }
 ```
 
-### 2. Antigravity & Codex
-Antigravity and Codex support both global and workspace-scoped configurations.
+#### Global Antigravity Configuration
 
-#### Workspace-Scoped Configuration (Recommended)
-Create (or edit) a file at the root of your project directory: `.agents/mcp_config.json` and insert the configuration:
-
-```json
-{
-  "mcpServers": {
-    "synapse-portal": {
-      "command": "/<path-to-your-workspace>/synapse/synapse-mcp/.venv/bin/python",
-      "args": [
-        "/<path-to-your-workspace>/synapse/synapse-mcp/synapse_mcp_server.py"
-      ],
-      "env": {
-        "SYNAPSE_PORTAL_HOST": "http://localhost:3100",
-        "CONTEXT7_API_KEY": "<your-context7-api-key>"
-      }
-    }
-  }
-}
-```
-
-#### Global Configuration
-Add the same block into the global config file located at `~/.gemini/config/mcp_config.json`.
+Add the absolute path block into the global config file located at `~/.gemini/config/mcp_config.json`.
 
 Alternatively, in the **Antigravity IDE Agent Panel**:
+
 1. Click the **"..." (three dots)** menu.
 2. Select **"Manage MCP Servers"**.
-3. Choose **"View raw config"** and paste the server configuration block there.
+3. Choose **"View raw config"** and paste the server configuration block there (using absolute paths).
 
 ---
 

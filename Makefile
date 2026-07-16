@@ -1,4 +1,4 @@
-.PHONY: check format check-py check-ts check-md format-py format-ts format-md test up down build restart seed migrate db-refresh dev link\:antigravity unlink\:antigravity render\:config build\:antigravity
+.PHONY: check format check-py check-ts check-md format-py format-ts format-md test up down build restart seed migrate db-refresh dev link\:antigravity unlink\:antigravity render\:config build\:antigravity manifests
 
 # Run all code checks
 check: check-py check-ts check-md
@@ -23,10 +23,10 @@ format-ts:
 
 # Markdown formatting and checking
 check-md:
-	cd synapse-portal && npx prettier --check --no-error-on-unmatched-pattern "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
+	cd synapse-portal && npx prettier --check --no-error-on-unmatched-pattern "../README.md" "../synapse-portal/README.md" "../synapse-plugin/README.md" "../synapse-mcp/README.md" "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
 
 format-md:
-	cd synapse-portal && npx prettier --write --no-error-on-unmatched-pattern "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
+	cd synapse-portal && npx prettier --write --no-error-on-unmatched-pattern "../README.md" "../synapse-portal/README.md" "../synapse-plugin/README.md" "../synapse-mcp/README.md" "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
 
 # Run tests
 test:
@@ -85,13 +85,17 @@ dev:
 
 # Render agent configuration from .env
 render\:config:
-	npx tsx synapse-plugin/scripts/render_config.ts
+	npx tsx synapse-portal/scripts/render_config.ts
 
 # Build antigravity plugin
 build\:antigravity: render\:config
-	npx tsx synapse-plugin/scripts/build_antigravity_plugin.ts
+	npx tsx synapse-portal/scripts/build_antigravity_plugin.ts
 
 # Build and link antigravity plugin to global customizations
 link\:antigravity: render\:config
-	npx tsx synapse-plugin/scripts/build_antigravity_plugin.ts --link
+	npx tsx synapse-portal/scripts/build_antigravity_plugin.ts --link
+
+# Generate portal manifests (agent-manifest.csv, skill-manifest.csv, tool-manifest.csv)
+manifests:
+	npx tsx synapse-portal/scripts/generate_manifests.ts
 

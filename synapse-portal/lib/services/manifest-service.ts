@@ -1,9 +1,9 @@
 import fs from "fs";
-import {
-  AGENT_MANIFEST_PATH,
-  SKILL_MANIFEST_PATH,
-  ADDITIONAL_SKILL_MANIFEST_PATH,
-} from "../config";
+import path from "path";
+import { MANIFEST_PATH } from "../config";
+
+const AGENT_MANIFEST_PATH = path.join(MANIFEST_PATH, "agent-manifest.csv");
+const SKILL_MANIFEST_PATH = path.join(MANIFEST_PATH, "skill-manifest.csv");
 
 export interface AgentManifestRecord {
   name: string;
@@ -26,6 +26,23 @@ export interface SkillManifestRecord {
   description: string;
   module: string;
   path: string;
+}
+
+export interface ToolManifestRecord {
+  name: string;
+  description: string;
+  module: string;
+  path: string;
+}
+
+export interface PersonalManifestRecord {
+  id: string;
+  displayName: string;
+  region: string;
+  description: string;
+  cultural_traits: string;
+  tech_literacy: string;
+  pain_points: string;
 }
 
 /**
@@ -53,7 +70,12 @@ function parseCsv<T>(filePath: string): T[] {
 
       for (let j = 0; j < line.length; j++) {
         if (line[j] === '"') {
-          inQuote = !inQuote;
+          if (inQuote && j + 1 < line.length && line[j + 1] === '"') {
+            cur += '"';
+            j++;
+          } else {
+            inQuote = !inQuote;
+          }
         } else if (line[j] === "," && !inQuote) {
           row.push(cur.trim());
           cur = "";
@@ -87,13 +109,23 @@ export const manifestService = {
   },
 
   /**
-   * Retrieves all skills from the skill-manifest.csv and addition-skill-manifest.csv
+   * Retrieves all skills from the skill-manifest.csv
    */
   getSkills: (): SkillManifestRecord[] => {
-    const mainSkills = parseCsv<SkillManifestRecord>(SKILL_MANIFEST_PATH);
-    const additionalSkills = parseCsv<SkillManifestRecord>(
-      ADDITIONAL_SKILL_MANIFEST_PATH,
-    );
-    return [...mainSkills, ...additionalSkills];
+    return parseCsv<SkillManifestRecord>(SKILL_MANIFEST_PATH);
+  },
+
+  /**
+   * Retrieves all tools from the tool-manifest.csv
+   */
+  getTools: (): ToolManifestRecord[] => {
+    return parseCsv<ToolManifestRecord>(path.join(MANIFEST_PATH, "tool-manifest.csv"));
+  },
+
+  /**
+   * Retrieves all personals from the personal-manifest.csv
+   */
+  getPersonals: (): PersonalManifestRecord[] => {
+    return parseCsv<PersonalManifestRecord>(path.join(MANIFEST_PATH, "personal-manifest.csv"));
   },
 };

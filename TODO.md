@@ -12,7 +12,6 @@ This document tracks planned features, enhancements, and architectural cleanups 
   - Implement a checkpoint/snapshot mechanism for Stitch designs (screens, variants, and design system tokens) within the local workspace (e.g., in `.stitch.json` or a dedicated `.stitch/checkpoints/` directory).
   - Enable agents to easily roll back, restore, or branch design states, ensuring seamless reusability of Stitch projects across development sessions without having to regenerate mockups from scratch.
 
-
 ## 🌐 synapse-portal
 
 - [ ] **Refactor Project Tags to Dedicated Project Table:**
@@ -39,11 +38,3 @@ This document tracks planned features, enhancements, and architectural cleanups 
     - Create dedicated service methods, API endpoints, and MCP tools for managing project-scoped user personas.
   - **Frontend UI:**
     - Replace the unstructured card nodes in the portal timeline with a structured, premium persona directory/table linked to the active project.
-
-
-## 📦 synapse-plugin
-
-- [ ] **Generate Missing Manifest Files:**
-  - Update the build script (`build_antigravity_plugin.ts`) to automatically scan the skills and agents directories.
-  - Parse the frontmatter metadata from `SKILL.md` or other source files to dynamically generate the missing manifest files (`agent-manifest.csv`, `skill-manifest.csv`, `addition-skill-manifest.csv`) during build time, ensuring the portal has up-to-date registry data.
-

@@ -117,7 +117,22 @@ function main() {
         if (!fs.existsSync(srcVenv)) {
             console.log(`Virtual environment not found at ${srcVenv}. Creating it...`);
             try {
-                execSync(`python3 -m venv .venv`, { stdio: 'inherit', cwd: srcMcpDir });
+                let pythonCmd = 'python3';
+                try {
+                    const versionOutput = execSync('python3 --version', { encoding: 'utf-8' });
+                    const match = versionOutput.match(/Python (\d+)\.(\d+)/);
+                    if (match && (parseInt(match[1]) < 3 || (parseInt(match[1]) === 3 && parseInt(match[2]) < 10))) {
+                        for (const ver of ['3.12', '3.11', '3.10']) {
+                            try {
+                                execSync(`python${ver} --version`, { stdio: 'ignore' });
+                                pythonCmd = `python${ver}`;
+                                break;
+                            } catch (e) {}
+                        }
+                    }
+                } catch (e) {}
+                console.log(`Using ${pythonCmd} to create virtual environment...`);
+                execSync(`${pythonCmd} -m venv .venv`, { stdio: 'inherit', cwd: srcMcpDir });
                 const pipPath = process.platform === 'win32'
                     ? path.join(srcVenv, 'Scripts', 'pip.exe')
                     : path.join(srcVenv, 'bin', 'pip');
@@ -174,7 +189,7 @@ function main() {
 
     // 5. Generate mcp_config.json pointing to the copied synapse-mcp and configuring StitchMCP
     const mcpConfigPath = path.join(buildDir, 'mcp_config.json');
-    const mcpServers: { [key: string]: any } = {
+    const mcpServers: Record<string, Record<string, unknown>> = {
         "synapse-portal": {
             "command": pythonExe,
             "args": [
@@ -187,7 +202,8 @@ function main() {
     };
 
     if (context7Key) {
-        mcpServers["synapse-portal"]["env"]["CONTEXT7_API_KEY"] = context7Key;
+        const portalEnv = mcpServers["synapse-portal"]["env"] as Record<string, string>;
+        portalEnv["CONTEXT7_API_KEY"] = context7Key;
     }
 
     if (stitchKey) {
@@ -261,6 +277,26 @@ function main() {
     }
 
     console.log(`Copied all skills and agent personas to ${destSkills}`);
+
+    // 9.5. Generate portal manifests (agent-manifest.csv, skill-manifest.csv, tool-manifest.csv)
+    try {
+        console.log("Generating portal manifests...");
+        execSync(`npx tsx "${path.join(workspaceRoot, 'synapse-portal', 'scripts', 'generate_manifests.ts')}"`, {
+            stdio: 'inherit',
+            cwd: workspaceRoot
+        });
+
+        // Copy generated manifests to build directory for relative links inside rules/skills to resolve
+        const srcManifests = path.join(workspaceRoot, 'synapse-portal', 'manifests');
+        const destManifests = path.join(buildDir, 'manifests');
+        if (fs.existsSync(srcManifests)) {
+            fs.cpSync(srcManifests, destManifests, { recursive: true });
+            console.log(`Copied manifests to ${destManifests}`);
+        }
+    } catch (e) {
+        console.error("Error generating portal manifests:", e);
+    }
+
     console.log("Build completed successfully!");
 
     // 10. Link to Antigravity global plugins folder if requested

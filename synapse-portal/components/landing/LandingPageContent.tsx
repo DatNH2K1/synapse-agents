@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Zap,
   Tag as TagIcon,
+  icons,
 } from "lucide-react";
 import Avatar from "@/components/shared/Avatar";
 import { useI18n } from "@/lib/i18n";
@@ -265,32 +266,36 @@ export default function LandingPageContent({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {agents.map((agent: Agent, i: number) => (
-            <TiltCard
-              key={i}
-              maxTilt={7}
-              style={{ "--delay-index": (i % 4) + 1 } as React.CSSProperties}
-              className="stagger-item glass border-white/5 bg-white/[0.01] hover:bg-white/[0.03] p-6 rounded-2xl hover:border-indigo-500/30 transition-all duration-300 relative group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#030712]">
-                    <Avatar seed={agent.seed} width={48} height={48} />
+          {agents.map((agent: Agent, i: number) => {
+            const IconComponent = (icons[agent.icon as keyof typeof icons] || icons.User) as React.ComponentType<{ size?: number; className?: string }>;
+
+            return (
+              <TiltCard
+                key={i}
+                maxTilt={7}
+                style={{ "--delay-index": (i % 4) + 1 } as React.CSSProperties}
+                className="stagger-item glass border-white/5 bg-white/[0.01] hover:bg-white/[0.03] p-6 rounded-2xl hover:border-indigo-500/30 transition-all duration-300 relative group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#030712]">
+                      <Avatar seed={agent.seed} width={48} height={48} />
+                    </div>
+                    <IconComponent size={20} className="text-indigo-400" />
                   </div>
-                  <span className="text-lg">{agent.icon}</span>
+                  <h3 className="text-base font-black text-white group-hover:text-indigo-400 transition-colors uppercase tracking-wider">
+                    {agent.name}
+                  </h3>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+                    {agent.title}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-3 leading-relaxed">
+                    {agent.desc}
+                  </p>
                 </div>
-                <h3 className="text-base font-black text-white group-hover:text-indigo-400 transition-colors uppercase tracking-wider">
-                  {agent.name}
-                </h3>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
-                  {agent.title}
-                </p>
-                <p className="text-xs text-slate-400 mt-3 leading-relaxed">
-                  {agent.desc}
-                </p>
-              </div>
-            </TiltCard>
-          ))}
+              </TiltCard>
+            );
+          })}
         </div>
       </section>
 

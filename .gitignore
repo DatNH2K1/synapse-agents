@@ -1,10 +1,45 @@
-# Mac
+# ==========================================
+# Operating System Files
+# ==========================================
 .DS_Store
+Thumbs.db
 
-# IDE
+# ==========================================
+# IDEs and Text Editors
+# ==========================================
 .idea/
 .vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
 
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
 .env
-synapse-plugin/.agents/config.toml
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+.venv/
+env/
+venv/
+
+# ==========================================
+# Build and Output
+# ==========================================
 build/
+dist/
+out/
+
+# ==========================================
+# Project Specific
+# ==========================================
+synapse-plugin/.agents/config.toml

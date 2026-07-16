@@ -4,12 +4,17 @@ import * as path from 'path';
 function main() {
     const currentDir = __dirname;
     const workspaceRoot = path.resolve(currentDir, '..', '..');
-    const envPath = path.join(workspaceRoot, '.env');
+    let envPath = path.join(workspaceRoot, '.env');
     const outputPath = path.join(workspaceRoot, 'synapse-plugin', '.agents', 'config.toml');
 
     if (!fs.existsSync(envPath)) {
-        console.error(`Error: .env file not found at ${envPath}`);
-        process.exit(1);
+        const fallbackPath = path.join(workspaceRoot, 'synapse-portal', '.env');
+        if (fs.existsSync(fallbackPath)) {
+            envPath = fallbackPath;
+        } else {
+            console.error(`Error: .env file not found at ${envPath} or ${fallbackPath}`);
+            process.exit(1);
+        }
     }
 
     // Parse .env

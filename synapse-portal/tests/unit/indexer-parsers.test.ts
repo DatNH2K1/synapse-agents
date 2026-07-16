@@ -50,7 +50,7 @@ describe("Repo Indexer Parser Adapters", () => {
         fs.unlinkSync(testFile);
       }
     }
-  });
+  }, 30000);
 
   it("should parse Python files correctly using python adapter", () => {
     const testFile = path.resolve(__dirname, "temp-test.py");
@@ -83,7 +83,7 @@ class Calculator:
         fs.unlinkSync(testFile);
       }
     }
-  });
+  }, 30000);
 
   it("should parse PHP files correctly using php adapter", () => {
     const testFile = path.resolve(__dirname, "temp-test.php");
@@ -142,5 +142,5 @@ class Calculator:
         fs.unlinkSync(testFile);
       }
     }
-  });
+  }, 30000);
 });

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-function linkPlugin(buildDir: string, workspaceRoot: string) {
+function linkPlugin(buildDir: string) {
     const home = process.env.HOME || process.env.USERPROFILE || '';
     if (!home) {
         console.error("Error: Could not determine user home directory.");
@@ -314,7 +314,7 @@ function main() {
 
     // 10. Link to Antigravity global plugins folder if requested
     if (shouldLink) {
-        linkPlugin(buildDir, workspaceRoot);
+        linkPlugin(buildDir);
     }
 }
 

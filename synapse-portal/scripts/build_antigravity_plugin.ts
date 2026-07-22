@@ -42,6 +42,99 @@ function linkPlugin(buildDir: string) {
         console.log(`Successfully copied build folder to ${destLink}`);
     } catch (e) {
         console.error(`Error copying plugin to destination:`, e);
+        return;
+    }
+
+    // Generate global config/AGENTS.md
+    try {
+        const destAgentsMd = path.join(home, '.gemini', 'config', 'AGENTS.md');
+        // Ensure target directory exists
+        const destDir = path.dirname(destAgentsMd);
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir, { recursive: true });
+        }
+        
+        const targetPluginAgentsMd = path.join(destLink, 'AGENTS.md').replace(/\\/g, '/');
+        const agentsMdContent = `# AGENTS
+
+## Rules
+- MANDATORY: In the first turn of any conversation or session, you must view/read \`${targetPluginAgentsMd}\` and check the rules listed there (e.g. under \`synapse-plugin/rules/\`) to ensure you always follow the latest rules and formatting requirements dynamically.
+`;
+        
+        fs.writeFileSync(destAgentsMd, agentsMdContent, 'utf-8');
+        console.log(`Successfully created global config/AGENTS.md with absolute path at: ${destAgentsMd}`);
+    } catch (e) {
+        console.error(`Error generating global config/AGENTS.md:`, e);
+    }
+
+    // Update the global mcp_config.json
+    try {
+        const globalMcpConfigPath = path.join(home, '.gemini', 'config', 'mcp_config.json');
+        interface McpServerDef {
+            command?: string;
+            args?: string[];
+            env?: Record<string, string>;
+            [key: string]: unknown;
+        }
+        interface McpConfig {
+            mcpServers: Record<string, McpServerDef>;
+        }
+        let globalConfig: McpConfig = { mcpServers: {} };
+        if (fs.existsSync(globalMcpConfigPath)) {
+            try {
+                globalConfig = JSON.parse(fs.readFileSync(globalMcpConfigPath, 'utf-8')) as McpConfig;
+                if (!globalConfig.mcpServers) {
+                    globalConfig.mcpServers = {};
+                }
+            } catch (_err) {
+                console.warn(`Warning: Could not parse existing global mcp_config.json. Overwriting/re-creating...`);
+            }
+        }
+
+        // Read the built mcp_config.json to extract synapse-portal and StitchMCP config
+        const localMcpConfigPath = path.join(buildDir, 'mcp_config.json');
+        if (fs.existsSync(localMcpConfigPath)) {
+            const localConfig = JSON.parse(fs.readFileSync(localMcpConfigPath, 'utf-8'));
+            if (localConfig.mcpServers) {
+                for (const serverName of Object.keys(localConfig.mcpServers)) {
+                    const serverDef = localConfig.mcpServers[serverName];
+                    if (serverName === 'synapse-portal') {
+                        // For synapse-portal, convert command and args to paths using ~ instead of absolute home directory
+                        const pythonExe = process.platform === 'win32'
+                            ? 'synapse-mcp/.venv/Scripts/python.exe'
+                            : 'synapse-mcp/.venv/bin/python';
+                        const serverScript = 'synapse-mcp/synapse_mcp_server.py';
+                        
+                        const absPythonExe = path.join(destLink, pythonExe);
+                        const absServerScript = path.join(destLink, serverScript);
+                        
+                        globalConfig.mcpServers['synapse-portal'] = {
+                            command: absPythonExe.replace(/\\/g, '/'),
+                            args: [absServerScript.replace(/\\/g, '/')],
+                            env: serverDef.env || {}
+                        };
+                    } else {
+                        // For other servers like StitchMCP, copy as-is
+                        globalConfig.mcpServers[serverName] = serverDef;
+                    }
+                }
+                fs.writeFileSync(globalMcpConfigPath, JSON.stringify(globalConfig, null, 2), 'utf-8');
+                console.log(`Successfully merged MCP servers into global config at: ${globalMcpConfigPath}`);
+            }
+        }
+        
+        // Clean up local mcp_config.json from both build and linked directories to prevent relative-path loading errors
+        const buildMcpConfig = path.join(buildDir, 'mcp_config.json');
+        if (fs.existsSync(buildMcpConfig)) {
+            fs.unlinkSync(buildMcpConfig);
+        }
+        const destMcpConfig = path.join(destLink, 'mcp_config.json');
+        if (fs.existsSync(destMcpConfig)) {
+            fs.unlinkSync(destMcpConfig);
+        }
+        console.log(`Cleaned up plugin-level mcp_config.json from build and destination directories.`);
+    } catch (err) {
+        console.error(`Error updating global mcp_config.json:`, err);
     }
 }
 

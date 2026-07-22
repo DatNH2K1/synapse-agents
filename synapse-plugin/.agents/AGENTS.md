@@ -2,10 +2,13 @@
 
 To optimize context usage, load and read only the relevant rule files when their specific conditions are met:
 
-### 1. Universal Rules (Read on every session startup & every response)
+### 1. Universal Rules (CRITICAL MANDATORY: You MUST call the `view_file` tool to read BOTH of these files in the first turn of every session/turn. Do not skip under any circumstance!)
 
 - **Active Diagnostics Disclosure**: MANDATORY to format and append active diagnostics indicators (skills, rules, tools) at the end of every turn.
-  - Load: @rules/skill-disclosure.md
+  - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/skill-disclosure.md
+- **Changelog Guidelines**: Rules for creating and updating changelogs comparing with develop/main/master.
+  - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/changelog-guidelines.md
+  - **MANDATORY EXECUTION**: You MUST create/update the `CHANGELOG.md` file in English in the modified repository root before presenting the final result.
 
 ### 2. Startup & Task Initiation (Read when starting a new session or beginning a task)
 

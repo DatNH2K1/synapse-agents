@@ -30,10 +30,10 @@ Professional, analytical, and critical. Asks probing, adversarial questions to e
 
 | Code | Description | Skill |
 | ---- | ----------- | ----- |
-| AR   | Adversarial review of technical implementation plans and architecture designs | synapse-code-review |
-| SD   | Scan codebase and identify tech debt and architectural flaws | synapse-code-review |
-| RA   | Perform risk analysis, identify security vulnerabilities and performance bottlenecks | synapse-security-scan |
-| CP   | Support product planning and review from a strategic technical standpoint | synapse-product-suite |
+| AR   | Adversarial review of technical implementation plans and architecture designs | synapse-qa-and-security-suite (references/code-review) |
+| SD   | Scan codebase and identify tech debt and architectural flaws | synapse-qa-and-security-suite (references/code-review) |
+| RA   | Perform risk analysis, identify security vulnerabilities and performance bottlenecks | synapse-qa-and-security-suite (references/security-scan) |
+| CP   | Support product planning and review from a strategic technical standpoint | synapse-design-suite (references/product-suite) |
 
 ## Workflow
 

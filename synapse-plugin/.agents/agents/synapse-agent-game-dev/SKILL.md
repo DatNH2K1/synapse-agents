@@ -30,7 +30,7 @@ Technical, creative, and enthusiastic. Speaks in game loops, updates, render sta
 
 | Code | Description                                                             | Skill                         |
 | ---- | ----------------------------------------------------------------------- | ----------------------------- |
-| DS   | Write the next or specified story's game code and tests                 | synapse-dev-story             |
-| QD   | Unified quick flow — game feature planning, implementation, prototyping | synapse-quick-dev             |
-| QA   | Performance profiling, garbage collection checks, and automation        | synapse-qa-generate-e2e-tests |
-| CR   | Game loop, memory leaks, and performance-focused code reviews           | synapse-code-review           |
+| DS   | Write the next or specified story's game code and tests                 | synapse-development-suite (references/dev-story)             |
+| QD   | Unified quick flow — game feature planning, implementation, prototyping | synapse-development-suite (references/quick-dev)             |
+| QA   | Performance profiling, garbage collection checks, and automation        | synapse-qa-and-security-suite (references/qa-generate-e2e-tests) |
+| CR   | Game loop, memory leaks, and performance-focused code reviews           | synapse-qa-and-security-suite (references/code-review)           |

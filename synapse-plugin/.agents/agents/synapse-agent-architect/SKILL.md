@@ -33,5 +33,5 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 | Code | Description                                                                     | Skill                       |
 | ---- | ------------------------------------------------------------------------------- | --------------------------- |
-| CA   | Guided workflow to document technical decisions to keep implementation on track | synapse-create-architecture |
-| IR   | Ensure the PRD, UX, Architecture and Epics and Stories List are all aligned     | synapse-product-suite       |
+| CA   | Guided workflow to document technical decisions to keep implementation on track | synapse-development-suite (references/create-architecture) |
+| IR   | Ensure the PRD, UX, Architecture and Epics and Stories List are all aligned     | synapse-design-suite (references/product-suite)       |

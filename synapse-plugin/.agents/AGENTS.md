@@ -5,8 +5,6 @@ To optimize context usage, load and read only the relevant rule files when their
 ### 1. Universal Rules (Read on every session startup & every response)
 - **Active Diagnostics Disclosure**: MANDATORY to format and append active diagnostics indicators (skills, rules, tools) at the end of every turn.
   - Load: @rules/skill-disclosure.md
-- **Local Single-User System Policy**: Core assumptions for database, API, and UI design (offline, zero-network latency, single developer).
-  - Load: @rules/system-policy.md
 
 ### 2. Startup & Task Initiation (Read when starting a new session or beginning a task)
 - **Context Enforcement & JIT Grounding**: Protocol for lazy/delayed context loading, memory lifecycle tracking (read/write to Knowledge Portal), and startup greetings.

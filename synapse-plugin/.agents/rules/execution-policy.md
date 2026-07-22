@@ -2,13 +2,14 @@
 
 ### 1. Prerequisite: Read & Apply Config from config.toml
 
-To obtain system and environment settings, the agent MUST read the generated configuration file at `../config.toml` (relative to the rules directory) and use its values. DO NOT attempt to read `.env` files directly to avoid exposing sensitive keys (such as `GEMINI_API_KEY` or `POSTGRES_PASSWORD`).
+To obtain system and environment settings, the agent MUST read the generated configuration file at `../config.toml` (relative to the rules directory) and use its values. DO NOT attempt to read `.env` files directly to avoid exposing sensitive keys.
 
 When interacting, you must read `../config.toml` and map the placeholders as follows:
 
 - `{user_name}`: Use the value of `user_name` (e.g., greet the user with this name).
 - `{communication_language}`: Use the value of `communication_language` for all user-facing chat and prompts.
 - `{document_output_language}`: Use the value of `document_output_language` for generating any documents or text files.
+- `{coding_level}`: Use the value of `coding_level` (Level 0 to Level 5) to control the communication and explanation style.
 
 If the file does not exist or needs to be updated, run the render script first:
 

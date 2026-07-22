@@ -107,29 +107,44 @@ function main() {
     const skillsDir = path.join(workspaceRoot, 'synapse-plugin', '.agents', 'skills');
     const skillRecords: string[] = ['canonicalId,name,description,module,path'];
 
-    if (fs.existsSync(skillsDir)) {
-        const folders = fs.readdirSync(skillsDir);
-        for (const folder of folders) {
-            const skillPath = path.join(skillsDir, folder, 'SKILL.md');
-            if (fs.existsSync(skillPath)) {
-                const content = fs.readFileSync(skillPath, 'utf-8');
-                const meta = parseFrontmatter(content);
-                const relPath = `synapse-plugin/.agents/skills/${folder}/SKILL.md`;
-                
-                let desc = meta.description || '';
-                const cutIndex = desc.search(/mandatory:|trigger immediately for:/i);
-                if (cutIndex !== -1) {
-                    desc = desc.substring(0, cutIndex).trim();
-                }
-
-                skillRecords.push([
-                    toCsvField(meta.name || folder),
-                    toCsvField(meta.name || folder),
-                    toCsvField(desc),
-                    toCsvField('synapse-plugin'),
-                    toCsvField(relPath)
-                ].join(','));
+    function findSkillMdFiles(dir: string): string[] {
+        let results: string[] = [];
+        if (!fs.existsSync(dir)) return results;
+        const list = fs.readdirSync(dir);
+        for (const file of list) {
+            const filePath = path.join(dir, file);
+            const stat = fs.statSync(filePath);
+            if (stat && stat.isDirectory()) {
+                results = results.concat(findSkillMdFiles(filePath));
+            } else if (file === 'SKILL.md') {
+                results.push(filePath);
             }
+        }
+        return results;
+    }
+
+    if (fs.existsSync(skillsDir)) {
+        const skillPaths = findSkillMdFiles(skillsDir);
+        for (const skillPath of skillPaths) {
+            const content = fs.readFileSync(skillPath, 'utf-8');
+            const meta = parseFrontmatter(content);
+            const relativeFolder = path.relative(skillsDir, path.dirname(skillPath)).replace(/\\/g, '/');
+            const folderName = path.basename(path.dirname(skillPath));
+            const relPath = `synapse-plugin/.agents/skills/${relativeFolder}/SKILL.md`;
+            
+            let desc = meta.description || '';
+            const cutIndex = desc.search(/mandatory:|trigger immediately for:/i);
+            if (cutIndex !== -1) {
+                desc = desc.substring(0, cutIndex).trim();
+            }
+
+            skillRecords.push([
+                toCsvField(meta.name || folderName),
+                toCsvField(meta.name || folderName),
+                toCsvField(desc),
+                toCsvField('synapse-plugin'),
+                toCsvField(relPath)
+            ].join(','));
         }
     }
     fs.writeFileSync(path.join(manifestsDir, 'skill-manifest.csv'), skillRecords.join('\n') + '\n', 'utf-8');

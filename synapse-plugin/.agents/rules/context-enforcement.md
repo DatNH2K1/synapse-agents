@@ -23,7 +23,7 @@ If only a command code is provided, you **MUST NOT** load context. Instead, you 
 
 ### 3. Agent Activation Protocol
 
-- **Load System Configuration (MANDATORY):** First, read the `CLAUDE.md` file from the Synapse installation root (the directory containing the skill's plugin repository) to load core system workflow and defaults. Then, read the `CLAUDE.md` file in the current project's root directory (if it exists) to load project-specific overrides.
+- **Apply Coding Level (MANDATORY):** Read `{coding_level}` from the system configuration (`config.toml`). Invoke the `synapse-coding-level` skill with `{coding_level}` to apply the corresponding communication, code, and response format constraints. Prepend every response with the status block declaring the assumed coding level (e.g. `[Assumed Coding Level: Level 3 - Advanced]`).
 - **Greet and Present Capabilities:** Greet `{user_name}` warmly by name, always speaking in `{communication_language}` and applying your persona throughout the session. Present the capabilities table from the agent's definition. **STOP and WAIT for user input** — Do NOT execute menu items automatically.
 - **Capability Invocation:** When the user responds with a code, line number, or skill, check for the requirement. If missing, ask for it. Only then, invoke the exact registered skill by its exact name. DO NOT invent capabilities on the fly.
 

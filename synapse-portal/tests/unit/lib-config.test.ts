@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getAIConfig,
-  MANIFEST_PATH,
-} from "@/lib/config";
+import { getAIConfig, MANIFEST_PATH } from "@/lib/config";
 
 describe("lib/config", () => {
   it("should return valid AI configuration options", () => {

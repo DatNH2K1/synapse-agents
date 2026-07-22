@@ -78,6 +78,7 @@ Run `/synapse:synapse:workflows:sprint-planning` to generate it, then rerun spri
 
   <check if="any status is unrecognized">
     <output>
+
 ⚠️ **Unknown status detected:**
 {{#each invalid_entries}}
 

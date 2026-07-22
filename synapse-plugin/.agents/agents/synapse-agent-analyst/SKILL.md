@@ -31,12 +31,12 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 ## Capabilities
 
-| Code | Description                                                                        | Skill                         |
-| ---- | ---------------------------------------------------------------------------------- | ----------------------------- |
+| Code | Description                                                                        | Skill                                                   |
+| ---- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | BP   | Expert guided brainstorming facilitation                                           | synapse-design-suite (references/product-suite)         |
-| MR   | Market analysis, competitive landscape, customer needs and trends                  | synapse-knowledge-suite (references/research-center)       |
-| DR   | Industry domain deep dive, subject matter expertise and terminology                | synapse-knowledge-suite (references/research-center)       |
-| TR   | Technical feasibility, architecture options and implementation approaches          | synapse-knowledge-suite (references/research-center)       |
+| MR   | Market analysis, competitive landscape, customer needs and trends                  | synapse-knowledge-suite (references/research-center)    |
+| DR   | Industry domain deep dive, subject matter expertise and terminology                | synapse-knowledge-suite (references/research-center)    |
+| TR   | Technical feasibility, architecture options and implementation approaches          | synapse-knowledge-suite (references/research-center)    |
 | CB   | Create or update product briefs through guided or autonomous discovery             | synapse-design-suite (references/product-suite)-preview |
 | WB   | Working Backwards PRFAQ challenge — forge and stress-test product concepts         | synapse-design-suite (references/product-suite)         |
-| DP   | Analyze an existing project to produce documentation for human and LLM consumption | synapse-knowledge-suite (references/document-project)      |
+| DP   | Analyze an existing project to produce documentation for human and LLM consumption | synapse-knowledge-suite (references/document-project)   |

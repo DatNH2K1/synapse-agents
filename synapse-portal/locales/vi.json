@@ -209,5 +209,16 @@
   "postgresql": "PostgreSQL",
   "select_repository": "Chọn Repository",
   "no_data_indexed": "Chưa có dự án nào được quét.",
-  "folder_tree": "Cấu trúc thư mục"
+  "folder_tree": "Cấu trúc thư mục",
+  "user_personas": "Hồ sơ người dùng",
+  "user_personas_desc": "Hồ sơ người dùng mục tiêu, đặc điểm văn hóa và các điểm đau được dùng để nhập vai tác nhân và kiểm thử trải nghiệm.",
+  "literacy": "Trình độ",
+  "details_arrow": "Chi tiết →",
+  "no_personas_match": "Không có hồ sơ nào khớp với bộ lọc của bạn.",
+  "system_tools": "Công cụ hệ thống",
+  "system_tools_desc": "Các công cụ tự động và chức năng MCP được chia sẻ trong mạng lưới Tác nhân Synapse.",
+  "tech_literacy_level": "💻 Trình độ: {level}",
+  "about": "Giới thiệu",
+  "cultural_traits_title": "🧠 Đặc điểm & Ưu tiên văn hóa",
+  "pain_points_title": "⚠️ Điểm đau"
 }

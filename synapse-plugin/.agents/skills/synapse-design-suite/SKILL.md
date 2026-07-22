@@ -40,7 +40,7 @@ When executing any layer, you MUST refer to the registry table below and **only 
 | **Stitch**               | [`./references/stitch/SKILL.md`](./references/stitch/SKILL.md)                             | Google Stitch UI generation and design systems         | Triggered when asked to create/edit Stitch UI screens     |
 | **Copywriting**          | [`./references/copywriting/SKILL.md`](./references/copywriting/SKILL.md)                   | High-converting copywriting formulas and styles        | Triggered when writing landing page copy or CTAs          |
 | **Radical Experience**   | [`./references/radical-experience/SKILL.md`](./references/radical-experience/SKILL.md)     | Zero-Click UI, gamification, and peak-end rule         | Triggered on advanced interactive UI & animations         |
-| **Disruptive Ideation**  | [`./references/disruptive-ideation/SKILL.md`](./references/disruptive-ideation/SKILL.md)   | Blue Ocean ERRC, Worst Possible Idea, SCAMPER           | Triggered during brainstorms and product concept phases   |
+| **Disruptive Ideation**  | [`./references/disruptive-ideation/SKILL.md`](./references/disruptive-ideation/SKILL.md)   | Blue Ocean ERRC, Worst Possible Idea, SCAMPER          | Triggered during brainstorms and product concept phases   |
 | **Trend Forecasting**    | [`./references/trend-forecasting/SKILL.md`](./references/trend-forecasting/SKILL.md)       | Weak Signals and STEEP strategic forecasting           | Triggered during roadmap and futurism analysis            |
 | **Product Suite**        | [`./references/product-suite/SKILL.md`](./references/product-suite/SKILL.md)               | Ideation, PRD, stories breakdown, sprint planning      | Triggered when creating PRDs, stories, sprint plans       |
 

@@ -209,5 +209,16 @@
   "postgresql": "PostgreSQL",
   "select_repository": "Select Repository",
   "no_data_indexed": "No repository has been indexed yet.",
-  "folder_tree": "Folder Tree"
+  "folder_tree": "Folder Tree",
+  "user_personas": "User Personas",
+  "user_personas_desc": "Target user profiles, cultural traits, and pain points used for agent roleplay and user experience testing.",
+  "literacy": "Literacy",
+  "details_arrow": "Details →",
+  "no_personas_match": "No personas match your filters.",
+  "system_tools": "System Tools",
+  "system_tools_desc": "Automated tools and MCP functions exposed to the Synapse Agent network.",
+  "tech_literacy_level": "💻 {level} Literacy",
+  "about": "About",
+  "cultural_traits_title": "🧠 Cultural Traits & Preferences",
+  "pain_points_title": "⚠️ Pain Points"
 }

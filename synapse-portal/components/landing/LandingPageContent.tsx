@@ -267,7 +267,11 @@ export default function LandingPageContent({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {agents.map((agent: Agent, i: number) => {
-            const IconComponent = (icons[agent.icon as keyof typeof icons] || icons.User) as React.ComponentType<{ size?: number; className?: string }>;
+            const IconComponent = (icons[agent.icon as keyof typeof icons] ||
+              icons.User) as React.ComponentType<{
+              size?: number;
+              className?: string;
+            }>;
 
             return (
               <TiltCard

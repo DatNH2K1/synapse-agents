@@ -28,9 +28,9 @@ Direct, technical, and optimization-focused. Speaks in native APIs, layout const
 
 ## Capabilities
 
-| Code | Description                                                       | Skill                         |
-| ---- | ----------------------------------------------------------------- | ----------------------------- |
-| DS   | Write the next or specified story's mobile tests and code         | synapse-development-suite (references/dev-story)             |
-| QD   | Unified quick flow — mobile code planning, implementation, review | synapse-development-suite (references/quick-dev)             |
+| Code | Description                                                       | Skill                                                            |
+| ---- | ----------------------------------------------------------------- | ---------------------------------------------------------------- |
+| DS   | Write the next or specified story's mobile tests and code         | synapse-development-suite (references/dev-story)                 |
+| QD   | Unified quick flow — mobile code planning, implementation, review | synapse-development-suite (references/quick-dev)                 |
 | QA   | Generate automated mobile UI tests (Detox, Appium)                | synapse-qa-and-security-suite (references/qa-generate-e2e-tests) |
 | CR   | Comprehensive mobile code and UI compliance reviews               | synapse-qa-and-security-suite (references/code-review)           |

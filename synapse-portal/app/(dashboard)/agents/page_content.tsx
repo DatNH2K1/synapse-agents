@@ -7,7 +7,15 @@ import * as LucideIcons from "lucide-react";
 import TiltCard from "@/components/landing/TiltCard";
 import Avatar from "@/components/shared/Avatar";
 
-const AgentIcon = ({ name, className, size = 20 }: { name: string; className?: string; size?: number }) => {
+const AgentIcon = ({
+  name,
+  className,
+  size = 20,
+}: {
+  name: string;
+  className?: string;
+  size?: number;
+}) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const IconComponent = (LucideIcons as any)[name];
   if (!IconComponent) {
@@ -75,7 +83,9 @@ export default function AgentsPageContent({
 }) {
   const { t } = useI18n();
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-  const [selectedPersonal, setSelectedPersonal] = useState<Personal | null>(null);
+  const [selectedPersonal, setSelectedPersonal] = useState<Personal | null>(
+    null,
+  );
   const [activeTab, setActiveTab] = useState<
     "overview" | "protocols" | "capabilities"
   >("overview");
@@ -89,7 +99,10 @@ export default function AgentsPageContent({
   const [personalSearch, setPersonalSearch] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All");
 
-  const regions = ["All", ...Array.from(new Set(personals.map((p) => p.region).filter(Boolean)))];
+  const regions = [
+    "All",
+    ...Array.from(new Set(personals.map((p) => p.region).filter(Boolean))),
+  ];
 
   const filteredPersonals = personals.filter((p) => {
     const matchesSearch =
@@ -99,7 +112,8 @@ export default function AgentsPageContent({
       p.pain_points.toLowerCase().includes(personalSearch.toLowerCase()) ||
       p.region.toLowerCase().includes(personalSearch.toLowerCase());
 
-    const matchesRegion = selectedRegion === "All" || p.region === selectedRegion;
+    const matchesRegion =
+      selectedRegion === "All" || p.region === selectedRegion;
 
     return matchesSearch && matchesRegion;
   });
@@ -133,7 +147,11 @@ export default function AgentsPageContent({
                     height={40}
                   />
                   <span className="absolute -bottom-1 -right-1 bg-dashboard-bg border border-dashboard-fg/10 rounded-full p-1 leading-none shadow-md flex items-center justify-center">
-                    <AgentIcon name={agent.icon} size={12} className="text-indigo-400" />
+                    <AgentIcon
+                      name={agent.icon}
+                      size={12}
+                      className="text-indigo-400"
+                    />
                   </span>
                 </div>
                 <div>
@@ -185,11 +203,11 @@ export default function AgentsPageContent({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <section>
             <h2 className="text-2xl font-black tracking-tight text-dashboard-fg uppercase italic">
-              User Personas
+              {t("user_personas")}
               <span className="text-indigo-500">.</span>
             </h2>
             <p className="text-xs font-medium text-slate-500">
-              Target user profiles, cultural traits, and pain points used for agent roleplay and user experience testing.
+              {t("user_personas_desc")}
             </p>
           </section>
 
@@ -256,17 +274,20 @@ export default function AgentsPageContent({
 
               <div className="mt-3 flex items-center justify-between border-t border-dashboard-fg/5 pt-2">
                 <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">
-                  Literacy: <span className="text-slate-400 font-semibold">{personal.tech_literacy}</span>
+                  {t("literacy")}:{" "}
+                  <span className="text-slate-400 font-semibold">
+                    {personal.tech_literacy}
+                  </span>
                 </span>
                 <span className="text-[9px] text-indigo-400 font-black group-hover:translate-x-1 transition-transform">
-                  Details →
+                  {t("details_arrow")}
                 </span>
               </div>
             </TiltCard>
           ))}
           {filteredPersonals.length === 0 && (
             <div className="col-span-full py-8 text-center text-xs text-slate-500">
-              No personas match your filters.
+              {t("no_personas_match")}
             </div>
           )}
         </div>
@@ -314,11 +335,11 @@ export default function AgentsPageContent({
       <section className="space-y-8">
         <section>
           <h2 className="text-2xl font-black tracking-tight text-dashboard-fg uppercase italic">
-            System Tools
+            {t("system_tools")}
             <span className="text-purple-500">.</span>
           </h2>
           <p className="text-xs font-medium text-slate-500">
-            Automated tools and MCP functions exposed to the Synapse Agent network.
+            {t("system_tools_desc")}
           </p>
         </section>
 
@@ -380,7 +401,11 @@ export default function AgentsPageContent({
                   <h3 className="text-2xl font-black text-dashboard-fg tracking-tight uppercase">
                     {selectedAgent.displayName || selectedAgent.name}
                   </h3>
-                  <AgentIcon name={selectedAgent.icon} size={24} className="text-indigo-400" />
+                  <AgentIcon
+                    name={selectedAgent.icon}
+                    size={24}
+                    className="text-indigo-400"
+                  />
                 </div>
                 <p className="text-xs font-black text-indigo-400 uppercase tracking-widest mt-1">
                   {selectedAgent.title}
@@ -617,7 +642,7 @@ export default function AgentsPageContent({
           <div className="bg-dashboard-bg/95 border border-dashboard-fg/10 rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col text-dashboard-fg">
             <div className="absolute top-0 left-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
-            
+
             <button
               onClick={() => setSelectedPersonal(null)}
               className="absolute top-6 right-6 text-dashboard-fg/60 hover:text-dashboard-fg transition-colors cursor-pointer z-10 p-1.5 rounded-full hover:bg-dashboard-fg/5"
@@ -642,7 +667,7 @@ export default function AgentsPageContent({
                     📍 {selectedPersonal.region}
                   </span>
                   <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-400">
-                    💻 {selectedPersonal.tech_literacy} Literacy
+                    {t("tech_literacy_level", { level: selectedPersonal.tech_literacy })}
                   </span>
                 </div>
               </div>
@@ -651,7 +676,7 @@ export default function AgentsPageContent({
             <div className="space-y-6">
               <div className="space-y-2">
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                  About
+                  {t("about")}
                 </h4>
                 <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium">
                   {selectedPersonal.description}
@@ -660,7 +685,7 @@ export default function AgentsPageContent({
 
               <div className="space-y-2">
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-1.5">
-                  🧠 Cultural Traits & Preferences
+                  {t("cultural_traits_title")}
                 </h4>
                 <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium bg-indigo-500/[0.02] border-l-2 border-indigo-500/30 pl-4 py-2 rounded-r-xl">
                   {selectedPersonal.cultural_traits}
@@ -669,7 +694,7 @@ export default function AgentsPageContent({
 
               <div className="space-y-2">
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-400 flex items-center gap-1.5">
-                  ⚠️ Pain Points
+                  {t("pain_points_title")}
                 </h4>
                 <p className="text-sm text-dashboard-fg/80 leading-relaxed font-medium bg-rose-500/[0.02] border-l-2 border-rose-500/30 pl-4 py-2 rounded-r-xl">
                   {selectedPersonal.pain_points}

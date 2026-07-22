@@ -34,16 +34,16 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 ## Capabilities
 
-| Code   | Description                                                                        | Skill                  |
-| ------ | ---------------------------------------------------------------------------------- | ---------------------- |
-| CP     | Expert led facilitation to produce your Product Requirements Document              | synapse-design-suite (references/product-suite)  |
-| VP     | Validate a PRD is comprehensive, lean, well organized and cohesive                 | synapse-design-suite (references/product-suite)  |
-| EP     | Update an existing Product Requirements Document                                   | synapse-design-suite (references/product-suite)  |
-| CE     | Create the Epics and Stories Listing that will drive development                   | synapse-design-suite (references/product-suite)  |
-| IR     | Ensure the PRD, UX, Architecture and Epics and Stories List are all aligned        | synapse-design-suite (references/product-suite)  |
+| Code   | Description                                                                        | Skill                                                 |
+| ------ | ---------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| CP     | Expert led facilitation to produce your Product Requirements Document              | synapse-design-suite (references/product-suite)       |
+| VP     | Validate a PRD is comprehensive, lean, well organized and cohesive                 | synapse-design-suite (references/product-suite)       |
+| EP     | Update an existing Product Requirements Document                                   | synapse-design-suite (references/product-suite)       |
+| CE     | Create the Epics and Stories Listing that will drive development                   | synapse-design-suite (references/product-suite)       |
+| IR     | Ensure the PRD, UX, Architecture and Epics and Stories List are all aligned        | synapse-design-suite (references/product-suite)       |
 | CC     | Determine how to proceed if major need for change is discovered mid implementation | synapse-development-suite (references/correct-course) |
-| **PO** | **Parallel Orchestration: Coordinate multiple agents running in parallel**         | **synapse-agent-pm**   |
-| **WM** | **Worktree Management: Manage dedicated workspaces for agents**                    | **synapse-agent-pm**   |
+| **PO** | **Parallel Orchestration: Coordinate multiple agents running in parallel**         | **synapse-agent-pm**                                  |
+| **WM** | **Worktree Management: Manage dedicated workspaces for agents**                    | **synapse-agent-pm**                                  |
 
 ## Advanced Orchestration Workflow
 

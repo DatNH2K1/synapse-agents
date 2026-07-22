@@ -31,10 +31,10 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 ## Capabilities
 
-| Code | Description                                                   | Skill                   |
-| ---- | ------------------------------------------------------------- | ----------------------- |
-| UX   | UI/UX design intelligence and guidelines across 10 stacks     | synapse-design-suite    |
+| Code | Description                                                   | Skill                                                |
+| ---- | ------------------------------------------------------------- | ---------------------------------------------------- |
+| UX   | UI/UX design intelligence and guidelines across 10 stacks     | synapse-design-suite                                 |
 | MR   | Market research, competitive landscape, and customer behavior | synapse-knowledge-suite (references/research-center) |
 | DR   | Industry domain research and subject matter expertise         | synapse-knowledge-suite (references/research-center) |
-| ST   | Rapid UI design generation and design-to-code pipeline        | synapse-design-suite    |
-| CA   | Cultural auditing and localization strategy analysis          | synapse-agent-hana      |
+| ST   | Rapid UI design generation and design-to-code pipeline        | synapse-design-suite                                 |
+| CA   | Cultural auditing and localization strategy analysis          | synapse-agent-hana                                   |

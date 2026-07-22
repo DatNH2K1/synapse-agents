@@ -32,13 +32,13 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 ## Capabilities
 
-| Code | Description                                                                                 | Skill                        |
-| ---- | ------------------------------------------------------------------------------------------- | ---------------------------- |
-| DI   | Disruptive Ideation (First Principles, Worst Possible Idea, ERRC Blue Ocean, SCAMPER)       | synapse-design-suite (references/disruptive-ideation)  |
-| TF   | Trend Forecasting & Futurism (Weak Signals, STEEP Analysis, Futures Cone)                   | synapse-design-suite (references/trend-forecasting)    |
-| RX   | Radical UX Experience Design (Peak-End Rule, Extreme Personas, Gamification, Zero-Click UI) | synapse-design-suite (references/radical-experience)   |
-| MR   | Deep market analysis, competitor mapping, and customer trends                               | synapse-knowledge-suite (references/research-center)      |
-| CW   | High-converting copywriting, headlines, and positioning statements                          | synapse-design-suite (references/copywriting)          |
+| Code | Description                                                                                 | Skill                                                        |
+| ---- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| DI   | Disruptive Ideation (First Principles, Worst Possible Idea, ERRC Blue Ocean, SCAMPER)       | synapse-design-suite (references/disruptive-ideation)        |
+| TF   | Trend Forecasting & Futurism (Weak Signals, STEEP Analysis, Futures Cone)                   | synapse-design-suite (references/trend-forecasting)          |
+| RX   | Radical UX Experience Design (Peak-End Rule, Extreme Personas, Gamification, Zero-Click UI) | synapse-design-suite (references/radical-experience)         |
+| MR   | Deep market analysis, competitor mapping, and customer trends                               | synapse-knowledge-suite (references/research-center)         |
+| CW   | High-converting copywriting, headlines, and positioning statements                          | synapse-design-suite (references/copywriting)                |
 | AE   | Advanced elicitation to push, refine, and stress-test ideas                                 | synapse-agent-coordination (references/advanced-elicitation) |
-| BP   | Build detailed PRDs, PRFAQs, and product briefs                                             | synapse-design-suite (references/product-suite)        |
-| KP   | Proactively record and retrieve lessons from the Knowledge Portal                           | synapse-knowledge-suite (references/memory)               |
+| BP   | Build detailed PRDs, PRFAQs, and product briefs                                             | synapse-design-suite (references/product-suite)              |
+| KP   | Proactively record and retrieve lessons from the Knowledge Portal                           | synapse-knowledge-suite (references/memory)                  |

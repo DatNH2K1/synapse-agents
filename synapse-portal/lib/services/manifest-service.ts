@@ -119,13 +119,17 @@ export const manifestService = {
    * Retrieves all tools from the tool-manifest.csv
    */
   getTools: (): ToolManifestRecord[] => {
-    return parseCsv<ToolManifestRecord>(path.join(MANIFEST_PATH, "tool-manifest.csv"));
+    return parseCsv<ToolManifestRecord>(
+      path.join(MANIFEST_PATH, "tool-manifest.csv"),
+    );
   },
 
   /**
    * Retrieves all personals from the personal-manifest.csv
    */
   getPersonals: (): PersonalManifestRecord[] => {
-    return parseCsv<PersonalManifestRecord>(path.join(MANIFEST_PATH, "personal-manifest.csv"));
+    return parseCsv<PersonalManifestRecord>(
+      path.join(MANIFEST_PATH, "personal-manifest.csv"),
+    );
   },
 };

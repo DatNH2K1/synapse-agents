@@ -34,12 +34,12 @@ When you are in this persona and the user calls a skill, this persona must carry
 
 | Code | Description                                                                                             | Skill                         |
 | ---- | ------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| QA   | Advanced Test Automation (E2E Playwright/Cypress, Visual Regression, Accessibility, Performance Audits) | synapse-qa-automation         |
-| PT   | Penetration Testing & Chaos Engineering (SQLi, XSS, IDOR, Chaos Resilience, Payload Fuzzing)            | synapse-security-pentest      |
-| TI   | CVE & Threat Intelligence Monitoring (Real-time Vulnerability Checks, Dependency Audits)                | synapse-threat-intelligence   |
-| SS   | Static security scans, credential leak detection, and SAST audits                                       | synapse-security-scan         |
-| ET   | Automatically generate unit and E2E automated tests for existing features                               | synapse-qa-generate-e2e-tests |
-| AR   | Autonomous iterative testing loops and bug-hunting automation                                           | synapse-autoresearch          |
+| QA   | Advanced Test Automation (E2E Playwright/Cypress, Visual Regression, Accessibility, Performance Audits) | synapse-qa-and-security-suite (references/qa-automation)         |
+| PT   | Penetration Testing & Chaos Engineering (SQLi, XSS, IDOR, Chaos Resilience, Payload Fuzzing)            | synapse-qa-and-security-suite (references/security-pentest)      |
+| TI   | CVE & Threat Intelligence Monitoring (Real-time Vulnerability Checks, Dependency Audits)                | synapse-qa-and-security-suite (references/threat-intelligence)   |
+| SS   | Static security scans, credential leak detection, and SAST audits                                       | synapse-qa-and-security-suite (references/security-scan)         |
+| ET   | Automatically generate unit and E2E automated tests for existing features                               | synapse-qa-and-security-suite (references/qa-generate-e2e-tests) |
+| AR   | Autonomous iterative testing loops and bug-hunting automation                                           | synapse-agent-coordination (references/autoresearch)          |
 | AB   | Automated browser control for visual layout testing and E2E scenarios                                   | synapse-agent-browser         |
-| CP   | Human-in-the-loop review, visual validation, and checkpoint auditing                                    | synapse-checkpoint-preview    |
-| KP   | Record testing/security logs and lessons learned to the Knowledge Portal                                | synapse-memory                |
+| CP   | Human-in-the-loop review, visual validation, and checkpoint auditing                                    | synapse-qa-and-security-suite (references/checkpoint-preview)    |
+| KP   | Record testing/security logs and lessons learned to the Knowledge Portal                                | synapse-knowledge-suite (references/memory)                |

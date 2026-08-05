@@ -667,7 +667,9 @@ export default function AgentsPageContent({
                     📍 {selectedPersonal.region}
                   </span>
                   <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-400">
-                    {t("tech_literacy_level", { level: selectedPersonal.tech_literacy })}
+                    {t("tech_literacy_level", {
+                      level: selectedPersonal.tech_literacy,
+                    })}
                   </span>
                 </div>
               </div>

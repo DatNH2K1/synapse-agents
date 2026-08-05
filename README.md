@@ -130,3 +130,11 @@ For details about each sub-component, refer to their respective README files:
 - 🌐 **Web Dashboard & API:** [Synapse Portal](./synapse-portal/README.md)
 - 🤖 **Agent Plugin & Skills:** [Synapse Plugin](./synapse-plugin/README.md)
 - 🔌 **FastMCP Server:** [Synapse Mcp](./synapse-agents/synapse-mcp/README.md)
+
+---
+
+## 🎖️ Acknowledgements
+
+This project incorporates architectural concepts, workflows, and configuration patterns adapted from:
+
+- [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) (MIT License) - An agile, role-based AI development framework.

@@ -6,6 +6,7 @@
 This rule outlines the protocol for generating and updating changelogs during task/feature completion.
 
 ### 1. Comparison & Target Branch
+
 - **Mandatory Comparison**: Always generate the changelog by comparing the current branch's changes against the `develop` branch.
 - **Fallback Branches**: If the `develop` branch does not exist in the repository, compare against `main` or `master` (in that order).
 - **Commit Amends Support**: If a commit is amended or re-applied, always perform the comparison against the base branch (`develop`/`main`/`master`) and only append/update the changes under the single version entry in the changelog.
@@ -14,6 +15,7 @@ This rule outlines the protocol for generating and updating changelogs during ta
 - **Ignore Localization Files**: Do not include updates/changes made to multilingual translation/localization JSON files (e.g., `ja.json`, `en.json`) in the changelog.
 
 ### 2. Structure Requirements
+
 - **Version Heading**: For the release heading (`##`), do not use `Unreleased`. Use the short/summary name of the current branch instead.
 - **Sections**: The changelog entry must contain the following sections (if a section has no changes or information, omit it entirely from the changelog entry):
   - **Overview**: A brief summary of the changes (mandatory).
@@ -27,4 +29,5 @@ This rule outlines the protocol for generating and updating changelogs during ta
   - **CONFIGURATION CHANGES**: Changes to env files, config files, settings.
 
 ### 3. Submodule Scope Focus
+
 - If the repository has git submodules and the changes are within a submodule, focus the changelog updates inside that submodule's own changelog file. Do not clutter the root changelog with detailed submodule-level changes.

@@ -18,7 +18,7 @@ description: |-
 
 # Party Mode
 
-Facilitate roundtable discussions where Synapse agents participate as **real subagents** — each spawned independently via the Agent tool so they think for themselves. You are the orchestrator: you pick voices, build context, spawn agents, and present their responses. In the default subagent mode, never generate agent responses yourself — that's the whole point. In `--solo` mode, you roleplay all agents directly.
+Facilitate roundtable discussions where Synapse agents participate as **real subagents** — each spawned independently via the Agent tool so they think for themselves. You are the orchestrator: you pick voices, build context, spawn agents, and present their responses. In the default subagent mode, never generate agent responses yourself — that's the whole point. In `--solo` mode, you roleplay all selected agents directly.
 
 ## Why This Matters
 
@@ -49,7 +49,7 @@ For each user message:
 
 ### 1. Check Technical Grounding (JIT Protocol)
 
-If the user's message contains a specific technical request (design, code, bug fix, or architecture), you **MUST** pause and invoke the [Synapse Memory Skill](../synapse-memory/SKILL.md) to retrieve specific project context BEFORE spawning agents. Do not skip this step.
+If the user's message contains a specific technical request (design, code, bug fix, or architecture), you **MUST** pause and invoke the [Synapse Memory Skill](../synapse-knowledge-suite/references/memory/SKILL.md) to retrieve specific project context BEFORE spawning agents. Do not skip this step.
 
 ### 2. Pick the Right Voices
 
@@ -60,6 +60,7 @@ Choose 2-4 agents whose expertise is most relevant to what the user is asking. U
 - **User names specific agents**: Always include those, plus 1-2 complementary voices
 - **User asks an agent to respond to another**: Spawn just that agent with the other's response as context
 - **Rotate over time** — avoid the same 2 agents dominating every round
+- **Bring in new agents** when the user requests or when the conversation calls for it
 
 ### 3. Build Context and Spawn
 

@@ -42,7 +42,7 @@ To scan and synchronize a repository, call the MCP tool:
   Call the MCP tool `index_repository(repo_path, repo_name)`.
 
   _Example:_
-  `index_repository(repo_path="/Users/datnghiem/Documents/synapse/synapse-agents", repo_name="synapse-agents")`
+  `index_repository(repo_path="./", repo_name="synapse-agents")`
 
 ---
 

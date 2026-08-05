@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## main
 
 ### IMPROVEMENTS
+- Promoted `synapse-party-mode` skill from a nested sub-skill of `synapse-agent-coordination` to a top-level skill in `synapse-plugin/.agents/skills/synapse-party-mode/SKILL.md`.
+- Updated `synapse-plugin/.agents/skills/synapse-agent-coordination/SKILL.md` to remove the nested sub-skill entry for Party Mode.
+- Removed all hardcoded absolute `file:///Users/...` paths in `SKILL.md` files across all skills and replaced them with relative paths.
+- Updated `changelog-guidelines.md` rules to globally prohibit using absolute paths in any code, configuration, or markdown files.
 - Added BMAD Method attribution to `README.md` under the Acknowledgements section to credit their open-source AI development workflows and role-based structures.
 - Created a global project `LICENSE` file under the MIT License, incorporating the required third-party MIT License copyright notice for BMAD Method components.
 

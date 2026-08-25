@@ -10,6 +10,7 @@ When interacting, you must read `../config.toml` and map the placeholders as fol
 - `{communication_language}`: Use the value of `communication_language` for all user-facing chat and prompts.
 - `{document_output_language}`: Use the value of `document_output_language` for generating any documents or text files.
 - `{coding_level}`: Use the value of `coding_level` (Level 0 to Level 5) to control the communication and explanation style.
+- `{sonarqube_port}`: Use the value of `port` under `[sonarqube]` (default: `9000`) for local SonarQube container port mapping and API host resolution.
 
 If the file does not exist or needs to be updated, run the render script first:
 

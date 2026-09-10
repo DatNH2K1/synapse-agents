@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
+import { generateManifests } from "./generate_manifests";
 
 function linkPlugin(buildDir: string) {
   const home = process.env.HOME || process.env.USERPROFILE || "";
@@ -73,37 +73,23 @@ function linkPlugin(buildDir: string) {
     console.error(`Error generating global config/AGENTS.md:`, e);
   }
 
-  // Update the global mcp_config.json
+  // Update global mcp_config.json files
   try {
-    const globalMcpConfigPath = path.join(
-      home,
-      ".gemini",
-      "config",
-      "mcp_config.json",
-    );
+    const globalMcpConfigPaths = [
+      path.join(home, ".gemini", "config", "mcp_config.json"),
+      path.join(home, ".gemini", "antigravity", "mcp_config.json"),
+      path.join(home, ".gemini", "antigravity-ide", "mcp_config.json"),
+    ];
+
     interface McpServerDef {
       command?: string;
       args?: string[];
       env?: Record<string, string>;
+      serverUrl?: string;
       [key: string]: unknown;
     }
     interface McpConfig {
       mcpServers: Record<string, McpServerDef>;
-    }
-    let globalConfig: McpConfig = { mcpServers: {} };
-    if (fs.existsSync(globalMcpConfigPath)) {
-      try {
-        globalConfig = JSON.parse(
-          fs.readFileSync(globalMcpConfigPath, "utf-8"),
-        ) as McpConfig;
-        if (!globalConfig.mcpServers) {
-          globalConfig.mcpServers = {};
-        }
-      } catch (_err) {
-        console.warn(
-          `Warning: Could not parse existing global mcp_config.json. Overwriting/re-creating...`,
-        );
-      }
     }
 
     // Read the built mcp_config.json to extract synapse-portal and StitchMCP config
@@ -113,37 +99,41 @@ function linkPlugin(buildDir: string) {
         fs.readFileSync(localMcpConfigPath, "utf-8"),
       );
       if (localConfig.mcpServers) {
-        for (const serverName of Object.keys(localConfig.mcpServers)) {
-          const serverDef = localConfig.mcpServers[serverName];
-          if (serverName === "synapse-portal") {
-            // For synapse-portal, convert command and args to paths using ~ instead of absolute home directory
-            const pythonExe =
-              process.platform === "win32"
-                ? "synapse-mcp/.venv/Scripts/python.exe"
-                : "synapse-mcp/.venv/bin/python";
-            const serverScript = "synapse-mcp/synapse_mcp_server.py";
-
-            const absPythonExe = path.join(destLink, pythonExe);
-            const absServerScript = path.join(destLink, serverScript);
-
-            globalConfig.mcpServers["synapse-portal"] = {
-              command: absPythonExe.replace(/\\/g, "/"),
-              args: [absServerScript.replace(/\\/g, "/")],
-              env: serverDef.env || {},
-            };
-          } else {
-            // For other servers like StitchMCP, copy as-is
-            globalConfig.mcpServers[serverName] = serverDef;
+        for (const globalMcpConfigPath of globalMcpConfigPaths) {
+          const configDir = path.dirname(globalMcpConfigPath);
+          if (!fs.existsSync(configDir)) {
+            continue;
           }
+          let globalConfig: McpConfig = { mcpServers: {} };
+          if (fs.existsSync(globalMcpConfigPath)) {
+            try {
+              globalConfig = JSON.parse(
+                fs.readFileSync(globalMcpConfigPath, "utf-8"),
+              ) as McpConfig;
+              if (!globalConfig.mcpServers) {
+                globalConfig.mcpServers = {};
+              }
+            } catch (_err) {
+              console.warn(
+                `Warning: Could not parse existing config at ${globalMcpConfigPath}. Re-creating...`,
+              );
+            }
+          }
+
+          for (const serverName of Object.keys(localConfig.mcpServers)) {
+            globalConfig.mcpServers[serverName] =
+              localConfig.mcpServers[serverName];
+          }
+
+          fs.writeFileSync(
+            globalMcpConfigPath,
+            JSON.stringify(globalConfig, null, 2),
+            "utf-8",
+          );
+          console.log(
+            `Successfully merged MCP servers into global config at: ${globalMcpConfigPath}`,
+          );
         }
-        fs.writeFileSync(
-          globalMcpConfigPath,
-          JSON.stringify(globalConfig, null, 2),
-          "utf-8",
-        );
-        console.log(
-          `Successfully merged MCP servers into global config at: ${globalMcpConfigPath}`,
-        );
       }
     }
 
@@ -181,8 +171,13 @@ function main() {
 
   const srcPluginDir = path.join(workspaceRoot, "synapse-plugin");
   const srcAgentsDir = path.join(srcPluginDir, ".agents");
-  const srcMcpDir = path.join(workspaceRoot, "synapse-mcp");
-  const envPath = path.join(workspaceRoot, ".env");
+  let envPath = path.join(workspaceRoot, ".env");
+  if (!fs.existsSync(envPath)) {
+    const fallbackPath = path.join(workspaceRoot, "synapse-portal", ".env");
+    if (fs.existsSync(fallbackPath)) {
+      envPath = fallbackPath;
+    }
+  }
 
   const buildDir = path.join(workspaceRoot, "build", "antigravity");
 
@@ -225,68 +220,8 @@ function main() {
   );
   console.log(`Created detailed ${pluginManifestPath}`);
 
-  // 3. Copy synapse-mcp folder (excluding idea, pycache)
-  const destMcpDir = path.join(buildDir, "synapse-mcp");
-  if (fs.existsSync(srcMcpDir)) {
-    const srcVenv = path.join(srcMcpDir, ".venv");
-    if (!fs.existsSync(srcVenv)) {
-      console.log(
-        `Virtual environment not found at ${srcVenv}. Creating it...`,
-      );
-      try {
-        let pythonCmd = "python3";
-        try {
-          const versionOutput = execSync("python3 --version", {
-            encoding: "utf-8",
-          });
-          const match = versionOutput.match(/Python (\d+)\.(\d+)/);
-          if (
-            match &&
-            (parseInt(match[1]) < 3 ||
-              (parseInt(match[1]) === 3 && parseInt(match[2]) < 10))
-          ) {
-            for (const ver of ["3.12", "3.11", "3.10"]) {
-              try {
-                execSync(`python${ver} --version`, { stdio: "ignore" });
-                pythonCmd = `python${ver}`;
-                break;
-              } catch {}
-            }
-          }
-        } catch {}
-        console.log(`Using ${pythonCmd} to create virtual environment...`);
-        execSync(`${pythonCmd} -m venv .venv`, {
-          stdio: "inherit",
-          cwd: srcMcpDir,
-        });
-        const pipPath =
-          process.platform === "win32"
-            ? path.join(srcVenv, "Scripts", "pip.exe")
-            : path.join(srcVenv, "bin", "pip");
-        console.log(`Installing dependencies from requirements.txt...`);
-        execSync(`"${pipPath}" install -r requirements.txt`, {
-          stdio: "inherit",
-          cwd: srcMcpDir,
-        });
-      } catch (error) {
-        console.error(
-          "Failed to automatically initialize virtual environment:",
-          error,
-        );
-      }
-    }
-    console.log(`Copying MCP server from ${srcMcpDir} to ${destMcpDir}...`);
-    fs.cpSync(srcMcpDir, destMcpDir, {
-      recursive: true,
-      filter: (src) => {
-        const basename = path.basename(src);
-        return (
-          ![".idea", "__pycache__", ".gitignore", ".pyc"].includes(basename) &&
-          !basename.endsWith(".pyc")
-        );
-      },
-    });
-  }
+  // 3. MCP server is natively integrated into synapse-portal (TypeScript)
+  console.log(`Configuring native TypeScript MCP Server from synapse-portal...`);
 
   // 4. Parse .env to extract keys for MCP
   const envVars: { [key: string]: string } = {};
@@ -312,35 +247,22 @@ function main() {
     }
   }
 
-  const portalHost = envVars["SYNAPSE_PORTAL_HOST"] || "http://localhost:3100";
-  const context7Key = envVars["CONTEXT7_API_KEY"] || "";
   const stitchKey = envVars["STITCH_API_KEY"] || "";
 
-  const pythonExe =
-    process.platform === "win32"
-      ? "synapse-mcp/.venv/Scripts/python.exe"
-      : "synapse-mcp/.venv/bin/python";
-  const serverScript = "synapse-mcp/synapse_mcp_server.py";
-
-  // 5. Generate mcp_config.json pointing to the copied synapse-mcp and configuring StitchMCP
   const mcpConfigPath = path.join(buildDir, "mcp_config.json");
+
+  let portalHost = envVars["SYNAPSE_PORTAL_HOST"];
+  if (!portalHost) {
+    const port = envVars["SYNAPSE_PORTAL_PORT"] || "3100";
+    portalHost = `http://localhost:${port}`;
+  }
+  const portalServerUrl = `${portalHost.replace(/\/+$/, "")}/api/mcp/sse`;
+
   const mcpServers: Record<string, Record<string, unknown>> = {
     "synapse-portal": {
-      command: pythonExe,
-      args: [serverScript],
-      env: {
-        SYNAPSE_PORTAL_HOST: portalHost,
-      },
+      serverUrl: portalServerUrl,
     },
   };
-
-  if (context7Key) {
-    const portalEnv = mcpServers["synapse-portal"]["env"] as Record<
-      string,
-      string
-    >;
-    portalEnv["CONTEXT7_API_KEY"] = context7Key;
-  }
 
   if (stitchKey) {
     mcpServers["StitchMCP"] = {
@@ -441,13 +363,7 @@ function main() {
   // 9.5. Generate portal manifests (agent-manifest.csv, skill-manifest.csv, tool-manifest.csv)
   try {
     console.log("Generating portal manifests...");
-    execSync(
-      `npx tsx "${path.join(workspaceRoot, "synapse-portal", "scripts", "generate_manifests.ts")}"`,
-      {
-        stdio: "inherit",
-        cwd: workspaceRoot,
-      },
-    );
+    generateManifests();
 
     // Copy generated manifests to build directory for relative links inside rules/skills to resolve
     const srcManifests = path.join(

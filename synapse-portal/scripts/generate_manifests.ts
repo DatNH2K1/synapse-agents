@@ -90,7 +90,7 @@ function parseCsv<T>(content: string): T[] {
   return results;
 }
 
-function main() {
+export function generateManifests() {
   const workspaceRoot = path.resolve(__dirname, "..", "..");
   const manifestsDir = path.join(workspaceRoot, "synapse-portal", "manifests");
 
@@ -288,55 +288,42 @@ function main() {
   // ==========================================
   // 3. Generate tool-manifest.csv
   // ==========================================
-  const mcpToolsDir = path.join(workspaceRoot, "synapse-mcp", "tools");
+  const mcpDir = path.join(
+    workspaceRoot,
+    "synapse-portal",
+    "mcp",
+  );
   const toolRecords: string[] = ["name,description,module,path"];
 
-  function scanPythonFiles(dir: string): string[] {
-    let results: string[] = [];
-    if (!fs.existsSync(dir)) return results;
-    const list = fs.readdirSync(dir);
-    for (const file of list) {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-      if (stat && stat.isDirectory()) {
-        if (
-          file !== "tests" &&
-          file !== "__pycache__" &&
-          file !== "skills_logic"
-        ) {
-          results = results.concat(scanPythonFiles(filePath));
+  if (fs.existsSync(mcpDir)) {
+    const entries = fs.readdirSync(mcpDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const indexPath = path.join(mcpDir, entry.name, "index.ts");
+        if (fs.existsSync(indexPath)) {
+          const content = fs.readFileSync(indexPath, "utf-8");
+          const relPath = path
+            .relative(workspaceRoot, indexPath)
+            .replace(/\\/g, "/");
+          const toolRegex =
+            /server\.tool\(\s*(?:McpToolName\.(\w+)|["']([^"']+)["'])\s*,\s*["']([^"']+)["']/g;
+          let match;
+          while ((match = toolRegex.exec(content)) !== null) {
+            const enumKey = match[1];
+            const directName = match[2];
+            const toolDesc = match[3];
+            const toolName = directName || enumKey.toLowerCase();
+            toolRecords.push(
+              [
+                toCsvField(toolName),
+                toCsvField(toolDesc),
+                toCsvField("synapse-portal"),
+                toCsvField(relPath),
+              ].join(","),
+            );
+          }
         }
-      } else if (file.endsWith(".py") && file !== "__init__.py") {
-        results.push(filePath);
       }
-    }
-    return results;
-  }
-
-  const pyFiles = scanPythonFiles(mcpToolsDir);
-  for (const pyFile of pyFiles) {
-    const content = fs.readFileSync(pyFile, "utf-8");
-    const relPath = path.relative(workspaceRoot, pyFile).replace(/\\/g, "/");
-
-    // Match python functions with docstrings: def name(...):\n    """docstring"""
-    // Python docstrings can be single or triple double quotes
-    const funcRegex =
-      /def\s+([a-zA-Z0-9_]+)\s*\([^)]*\)\s*(?:->\s*[^:]+)?\s*:\s*\r?\n\s+(?:"""|''')([\s\S]*?)(?:"""|''')/g;
-    let match;
-    while ((match = funcRegex.exec(content)) !== null) {
-      const funcName = match[1];
-      const docstring = match[2].trim();
-      // Get first line of docstring as the short description
-      const shortDesc = docstring.split("\n")[0].trim();
-
-      toolRecords.push(
-        [
-          toCsvField(funcName),
-          toCsvField(shortDesc),
-          toCsvField("synapse-mcp"),
-          toCsvField(relPath),
-        ].join(","),
-      );
     }
   }
 
@@ -394,4 +381,6 @@ function main() {
   );
 }
 
-main();
+if (require.main === module || !module.parent) {
+  generateManifests();
+}

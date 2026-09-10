@@ -23,7 +23,7 @@ Since this is the source directory, the files are not read directly from here by
 The build script inside the portal workspace (`synapse-portal/scripts/build_antigravity_plugin.ts`) handles:
 
 1. Cleaning the build target at `build/antigravity`.
-2. Copying the Python `synapse-mcp` directory (excluding runtime caches and ideas).
+2. Configuring native TypeScript MCP server from `synapse-portal`.
 3. Extracting credentials from `.env` to build `mcp_config.json` with appropriate API keys (`CONTEXT7_API_KEY`, `STITCH_API_KEY`).
 4. Copying rules from `.agents/rules/` to `build/antigravity/rules/`.
 5. Merging `.agents/skills/` and `.agents/agents/` into a single unified `skills/` directory under `build/antigravity/skills/`.

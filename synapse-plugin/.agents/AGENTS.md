@@ -8,7 +8,7 @@ To optimize context usage, load and read only the relevant rule files when their
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/skill-disclosure.md
 - **Changelog Guidelines**: Rules for creating and updating changelogs comparing with develop/main/master.
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/changelog-guidelines.md
-  - **MANDATORY EXECUTION**: You MUST create/update the `CHANGELOG.md` file in English in the modified repository root before presenting the final result.
+  - **MANDATORY EXECUTION**: You MUST create/update the `CHANGELOG.md` file in English located directly at the `.git` root folder of the modified repository (co-located with `.git`, never in a parent folder without `.git`) before presenting the final result.
 
 ### 2. Startup & Task Initiation (Read when starting a new session or beginning a task)
 

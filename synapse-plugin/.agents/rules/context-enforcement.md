@@ -39,9 +39,18 @@ Agents MUST strictly execute the memory lifecycle workflows across all task phas
    - At the end of a sprint, story, or task, the agent MUST evaluate if there is any new reusable lesson, design pattern, or feature architecture.
    - If yes, propose it using `propose_memory` in English with correct tags and section scopes (`section:<name>`, `project:<name>`). Do not record minor/trivial changes.
 
-### 5. Prioritize MCP Over CLI for Code Discovery
+### 5. Prioritize Dedicated MCP Tools & Hierarchy (CRITICAL)
 
-When searching for files, classes, routes, or code modules, agents MUST prioritize querying and reading through MCP tools (such as `query_repository_index`, `query_memory`, or `list_nodes`) first:
+When interacting with external services, web applications, or performing codebase discovery, agents MUST strictly follow this resolution hierarchy:
 
-1. **Search scanned files**: Use `query_repository_index` to find files, dependencies, dependents, or AST symbols that were scanned by `index_repository`.
-2. **Fallback to CLI**: Only when the target information is not indexed, is not found, or is insufficient in the MCP database, should the agent fall back to using local CLI search tools (such as `grep`, `find`, or manual workspace directory listing).
+1. **Dedicated Domain MCP (First Priority)**:
+   - Always search for and prioritize a specialized MCP server built for that specific service/platform (e.g., for Asana tasks/projects at `https://app.asana.com/`, use `asana_*` MCP tools like `asana_get_task_details`, `asana_get_project_tasks`; for SonarQube, use `sonar_*` MCP tools; for Knowledge Portal/AST, use `synapse-portal` MCP tools).
+2. **General Browser/DevTools MCP (Second Priority)**:
+   - If no dedicated MCP exists for the domain, or if the dedicated MCP does not support the required interactive operation (such as visual inspection, frontend DOM interaction, network interception, or live page debugging), fall back to general browser automation MCPs (e.g., `chrome-devtools-mcp` tools like `navigate_page`, `evaluate_script`, `click`, `take_screenshot`).
+3. **HTTP API / Raw Script Fallback (Last Resort)**:
+   - Only when neither a dedicated MCP nor a DevTools/Browser MCP is available or able to fulfill the requirement, fall back to executing raw HTTP requests (via `curl`, `fetch`, or scripts) or manual CLI work.
+
+#### Code Discovery Priority:
+
+- Use `query_repository_index` to find files, dependencies, dependents, or AST symbols scanned by `index_repository`.
+- Fall back to local CLI search tools (`grep`, `find`, or manual workspace directory listing) only when the target information is not indexed or is insufficient in the MCP database.

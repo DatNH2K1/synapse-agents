@@ -26,7 +26,10 @@ All notable changes to this project will be documented in this file.
 - Promoted `synapse-party-mode` skill from a nested sub-skill of `synapse-agent-coordination` to a top-level skill in `synapse-plugin/.agents/skills/synapse-party-mode/SKILL.md`.
 - Updated `synapse-plugin/.agents/skills/synapse-agent-coordination/SKILL.md` to remove the nested sub-skill entry for Party Mode.
 - Removed all hardcoded absolute `file:///Users/...` paths in `SKILL.md` files across all skills and replaced them with relative paths.
-- Updated `changelog-guidelines.md` rules to globally prohibit using absolute paths in any code, configuration, or markdown files.
+- **Updated Changelog Rule (`changelog-guidelines.md` & `AGENTS.md`)**:
+  - Enforced strict changelog location: `CHANGELOG.md` must always be placed directly at the root folder co-located with `.git` of the modified target repository. In multi-repo/monorepo/submodule setups, changelogs are never placed in non-git parent/wrapper directories.
+  - Added support for direct commits on base branches (`develop`, `main`, `master`) requiring date-stamped headings (e.g. `## develop - YYYY/MM/DD`) to prevent distinct daily tasks from blending into a single block.
+- **Updated Context & Tool Resolution Rule (`context-enforcement.md`)**: Enforced explicit 3-tier MCP resolution hierarchy prioritizing dedicated domain MCPs (e.g. Asana MCP, SonarQube MCP) -> Browser/DevTools MCP -> fallback to raw HTTP/CLI.
 - Added BMAD Method attribution to `README.md` under the Acknowledgements section to credit their open-source AI development workflows and role-based structures.
 - Created a global project `LICENSE` file under the MIT License, incorporating the required third-party MIT License copyright notice for BMAD Method components.
 

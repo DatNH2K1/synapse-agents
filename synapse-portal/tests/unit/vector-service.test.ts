@@ -108,7 +108,7 @@ describe("VectorService Tests", () => {
       delete process.env.GEMINI_API_KEY;
       const { vectorService } = await import("@/lib/services/vector-service");
 
-      const results = await vectorService.findSimilarNodes("query", "LESSON");
+      const results = await vectorService.findSimilarNodes("query");
       expect(results).toEqual([]);
     });
 
@@ -128,7 +128,7 @@ describe("VectorService Tests", () => {
       ];
       vi.mocked(prisma.$queryRaw).mockResolvedValue(mockDbResults);
 
-      const results = await vectorService.findSimilarNodes("query", "LESSON");
+      const results = await vectorService.findSimilarNodes("query");
       expect(results).toEqual([
         { id: "node-1", label: "Similar Node 1", score: 0.85 },
       ]);
@@ -147,7 +147,7 @@ describe("VectorService Tests", () => {
 
       vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error("DB Error"));
 
-      const results = await vectorService.findSimilarNodes("query", "LESSON");
+      const results = await vectorService.findSimilarNodes("query");
       expect(results).toEqual([]);
     });
   });
@@ -173,7 +173,6 @@ describe("VectorService Tests", () => {
 
       const results = await vectorService.findSimilarToNode(
         "node-abc",
-        "LESSON",
         "fallback",
       );
       expect(results).toEqual([
@@ -206,7 +205,6 @@ describe("VectorService Tests", () => {
 
       const results = await vectorService.findSimilarToNode(
         "node-abc",
-        "LESSON",
         "fallback",
       );
       expect(results).toEqual([

@@ -209,20 +209,18 @@ vi.mock("react-force-graph-2d", () => {
 
 describe("components/KnowledgeGraph", () => {
   const nodes = [
-    { id: "node-1", label: "Root Scope", type: "ROOT_SCOPE" } as DbNode,
-    { id: "node-2", label: "Tag A", type: "TAG" } as DbNode,
+    { id: "node-1", label: "Root Scope", type: "ROOT_SCOPE" } as unknown as DbNode,
+    { id: "node-2", label: "Tag A", type: "TAG" } as unknown as DbNode,
     {
       id: "node-3",
       label: "Cold Item",
-      type: "Feature",
       memory_tier: "COLD",
-    } as DbNode,
+    } as unknown as DbNode,
     {
       id: "node-4",
       label: "Core Item",
-      type: "Feature",
       memory_tier: "CORE",
-    } as DbNode,
+    } as unknown as DbNode,
   ];
 
   const edges = [

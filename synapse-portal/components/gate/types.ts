@@ -4,7 +4,7 @@ export type NodeWithTags = Node & { tags: Tag[] };
 
 export interface PendingUpdate {
   id: string;
-  type: string;
+  type?: string;
   label: string;
   status: string;
   last_verified: string;
@@ -29,7 +29,7 @@ interface MergeSourceNode {
   id: string;
   label: string;
   content: string;
-  type: string;
+  type?: string;
   isProposal?: boolean;
 }
 
@@ -37,7 +37,7 @@ export interface MergeData {
   sourceNodeIds: string[];
   proposalId: string; // Keep for UI tracking (the main pending node)
   label: string;
-  type: string;
+  type?: string;
   content: string;
   reason: string;
   selectedTagIds: string[];
@@ -55,7 +55,7 @@ export interface MergeData {
 export interface TimelineLog {
   id: string;
   label: string;
-  type: string;
+  type?: string;
   properties: string;
   status: "APPROVED" | "REJECTED" | "ARCHIVE";
   memory_tier: string;

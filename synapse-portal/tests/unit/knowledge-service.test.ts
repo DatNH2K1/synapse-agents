@@ -163,9 +163,7 @@ vi.mock("@/lib/services/queue-service", () => {
 
 const createMockNode = (overrides: Partial<Node> = {}): Node => ({
   id: "mock-node-id",
-  type: "LESSON",
   label: "Mock Label",
-  content_hash: null,
   success_count: 0,
   last_verified: new Date(),
   properties: "{}",
@@ -813,7 +811,7 @@ describe("KnowledgeService", () => {
       expect(markdown).toContain("Beta Rule");
       expect(markdown).toContain("COLD STORAGE");
       expect(markdown).toContain("Hibernating Memory");
-      expect(markdown).toContain("🔮");
+      expect(markdown).toContain("💡");
       expect(markdown).toContain("custom:mock-tag");
       expect(markdown).toContain("custom-with-version:mock-tag@1.0");
     });

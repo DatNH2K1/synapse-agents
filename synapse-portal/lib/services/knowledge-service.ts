@@ -29,7 +29,6 @@ export const knowledgeService = {
       },
       select: {
         id: true,
-        type: true,
         label: true,
         properties: true,
         status: true,
@@ -50,7 +49,6 @@ export const knowledgeService = {
       },
       select: {
         id: true,
-        type: true,
         label: true,
         properties: true,
         status: true,
@@ -94,7 +92,6 @@ export const knowledgeService = {
       where: { id: { in: ids } },
       select: {
         id: true,
-        type: true,
         label: true,
         properties: true,
         status: true,
@@ -184,7 +181,6 @@ export const knowledgeService = {
       orderBy: { last_verified: "desc" },
       select: {
         id: true,
-        type: true,
         label: true,
         properties: true,
         status: true,
@@ -205,7 +201,6 @@ export const knowledgeService = {
         // Use existing embedding if available (p.id) to avoid redundant API calls
         const matches = await vectorService.findSimilarToNode(
           p.id,
-          p.type,
           p.label,
           0.7,
           5,
@@ -315,7 +310,7 @@ export const knowledgeService = {
 
   proposeKnowledge: async (proposal: {
     label: string;
-    type: string;
+    type?: string;
     content: string;
     tags?: string[];
     metadata?: Record<string, string | number | boolean | null>;
@@ -428,7 +423,6 @@ export const knowledgeService = {
         data: {
           id: randomUUID(),
           label: proposal.label,
-          type: proposal.type,
           status: "PENDING",
           memory_tier: "ACTIVE",
           properties: JSON.stringify({
@@ -480,12 +474,12 @@ export const knowledgeService = {
   getRelatedNodes: async (startNodeId: string) => {
     // Postgres uses $1, $2 notation for raw queries or simple Prisma replacement
     const query = `
-      SELECT n.id, n.label, n.type, n.properties, n.status, n.last_verified, COUNT(target_tags."tagId") as overlap_count
+      SELECT n.id, n.label, n.properties, n.status, n.last_verified, COUNT(target_tags."tagId") as overlap_count
       FROM "Node" n
       JOIN "NodeTag" nt ON n.id = nt."nodeId"
       JOIN "NodeTag" target_tags ON nt."tagId" = target_tags."tagId"
       WHERE target_tags."nodeId" = $1 AND n.id != $2 AND n.status = 'APPROVED'
-      GROUP BY n.id, n.label, n.type, n.properties, n.status, n.last_verified
+      GROUP BY n.id, n.label, n.properties, n.status, n.last_verified
       ORDER BY overlap_count DESC
       LIMIT 20
     `;
@@ -547,7 +541,6 @@ export const knowledgeService = {
       select: {
         id: true,
         label: true,
-        type: true,
         properties: true,
         status: true,
         memory_tier: true,
@@ -776,10 +769,8 @@ export const knowledgeService = {
   ) => {
     let markdown = "# 🧠 Synapse JIT Context\n\n";
     markdown += `> [!NOTE]\n`;
-    markdown += `> **AI Instructions**: You must consume these retrieved knowledge nodes to guide your execution:\n`;
-    markdown += `> - 💡 **LESSON**: Mandatory best practices and pitfalls. You **MUST** strictly adhere to these to avoid past errors.\n`;
-    markdown += `> - ✨ **FEATURE**: Reference implementation details of completed features. Use these as architecture blueprints.\n`;
-    markdown += `> - 🔮 **CONTEXT**: High-level domain context or design patterns. Use these as general principles.\n\n`;
+    markdown += `> **AI Instructions**: You must consume these retrieved lessons and knowledge nodes to guide your execution:\n`;
+    markdown += `> - 💡 **LESSON**: Mandatory best practices, conventions, and pitfalls. Strictly adhere to these to avoid past errors.\n\n`;
     markdown += `Retrieved ${nodes.length} relevant knowledge nodes.\n\n`;
 
     // Define sections we want to group by
@@ -844,24 +835,18 @@ export const knowledgeService = {
         summaryStub = summaryStub.trim() + "... (Hibernating Memory)";
 
         let coldMd = `> [!NOTE]\n`;
-        coldMd += `> ❄️ **[COLD STORAGE - Decayed ${decayPercent}%]** [${node.type}] ${node.label}\n`;
+        coldMd += `> ❄️ **[COLD STORAGE - Decayed ${decayPercent}%]** ${node.label}\n`;
         coldMd += `> *This rule has hibernated for ${node.virtual_age || 90} active days in ${node.representative_tag || "project"}. Tag overlap: ${node.tag_overlap || "3/4"}.*\n`;
         coldMd += `> **Summary**: ${summaryStub}\n\n`;
         return coldMd;
       }
-
-      // Determine type emoji for visually rich presentation
-      let typeEmoji = "🧠";
-      if (node.type === "LESSON") typeEmoji = "💡";
-      else if (node.type === "FEATURE") typeEmoji = "✨";
-      else if (node.type === "CONTEXT") typeEmoji = "🔮";
 
       // Extract other tags grouped by scope
       const otherTags = (node.tags || [])
         .filter((t) => t.scope !== "section")
         .map((t) => `${t.scope}:${t.name}${t.version ? `@${t.version}` : ""}`);
 
-      let nodeMd = `#### ${typeEmoji} [${node.type}] ${node.label}\n`;
+      let nodeMd = `#### 💡 ${node.label}\n`;
       nodeMd += `- **Reference ID**: \`${node.id}\`\n`;
       if (otherTags.length > 0) {
         nodeMd += `- **Tags**: ${otherTags.map((t) => `\`${t}\``).join(", ")}\n`;
@@ -903,7 +888,7 @@ export const knowledgeService = {
   mergeNodes: async (params: {
     sourceNodeIds: string[];
     newLabel: string;
-    newType: string;
+    newType?: string;
     newContent: string;
     selectedTagIds: string[];
     reason: string;
@@ -915,7 +900,6 @@ export const knowledgeService = {
         data: {
           id: randomUUID(),
           label: params.newLabel,
-          type: params.newType,
           status: "APPROVED",
           memory_tier: "ACTIVE",
           properties: JSON.stringify({

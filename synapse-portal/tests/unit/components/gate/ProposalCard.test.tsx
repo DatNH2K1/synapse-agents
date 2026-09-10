@@ -47,8 +47,6 @@ describe("components/gate/ProposalCard", () => {
     {
       id: "node-1",
       label: "Existing Item",
-      type: "Feature",
-      content_hash: "hash-1",
       success_count: 1,
       last_verified: new Date(),
       properties: JSON.stringify({ content: "Existing item content." }),

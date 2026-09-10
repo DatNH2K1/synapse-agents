@@ -5,8 +5,6 @@ import { GitMerge, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatFullTag } from "@/lib/format-utils";
 import { MergeData } from "./types";
-import { NODE_TYPES } from "@/lib/constants";
-import FormSelect from "../shared/FormSelect";
 
 interface MergeModalProps {
   mergeData: MergeData;
@@ -78,9 +76,6 @@ export default function MergeModal({
                     >
                       {node.isProposal ? "Proposal" : "Master"}
                     </span>
-                    <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">
-                      {node.type}
-                    </span>
                   </div>
                   <h6 className="text-xs font-bold text-white leading-tight">
                     {node.label}
@@ -96,27 +91,17 @@ export default function MergeModal({
           {/* Right Panel: Merge Synthesized Editor */}
           <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar lg:p-6">
             {/* Basic Info */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
-                  {t("label_header")}
-                </label>
-                <input
-                  type="text"
-                  value={mergeData.label}
-                  onChange={(e) =>
-                    onUpdateMergeData({ ...mergeData, label: e.target.value })
-                  }
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:border-amber-500/50 outline-none transition-all"
-                />
-              </div>
-              <FormSelect
-                label={t("type_label")}
-                value={mergeData.type}
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                {t("label_header")}
+              </label>
+              <input
+                type="text"
+                value={mergeData.label}
                 onChange={(e) =>
-                  onUpdateMergeData({ ...mergeData, type: e.target.value })
+                  onUpdateMergeData({ ...mergeData, label: e.target.value })
                 }
-                options={NODE_TYPES.map((t) => ({ value: t, label: t }))}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:border-amber-500/50 outline-none transition-all"
               />
             </div>
 

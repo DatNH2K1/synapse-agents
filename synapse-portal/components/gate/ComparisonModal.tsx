@@ -38,7 +38,7 @@ export default function ComparisonModal({
               {t("diff_view")}
             </h4>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest">
-              {t("id_prefix")} {update.id} • {update.type}
+              {t("id_prefix")} {update.id}
             </p>
           </div>
           <button

@@ -21,8 +21,8 @@ export function registerMemoryTools(server: McpServer): void {
     McpToolName.PROPOSE_MEMORY,
     "Propose a new knowledge node to the Synapse Knowledge Portal.",
     proposeMemorySchema,
-    async ({ label, content, type, tags }) => {
-      const text = await proposeMemory(label, content, type, tags);
+    async ({ label, content, tags }) => {
+      const text = await proposeMemory(label, content, tags);
       return { content: [{ type: "text", text }] };
     },
   );

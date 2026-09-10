@@ -47,7 +47,6 @@ class VectorService {
 
   async findSimilarNodes(
     text: string,
-    type: string,
     threshold = 0.8,
     limit = 5,
   ): Promise<SimilarityResult[]> {
@@ -65,7 +64,6 @@ class VectorService {
         FROM "Node" 
         WHERE embedding IS NOT NULL 
         AND status IN ('APPROVED', 'BETA', 'GOLD')
-        AND type = ${type}
         AND 1 - (embedding <=> cast(${vectorStr} as vector)) > ${threshold} 
         ORDER BY score DESC 
         LIMIT ${limit}
@@ -84,7 +82,6 @@ class VectorService {
 
   async findSimilarToNode(
     nodeId: string,
-    type: string,
     fallbackText: string,
     threshold = 0.8,
     limit = 5,
@@ -125,7 +122,6 @@ class VectorService {
           FROM "Node" 
           WHERE embedding IS NOT NULL 
           AND status IN ('APPROVED', 'BETA', 'GOLD')
-          AND type = ${type}
           AND id != cast(${nodeId} as uuid)
           AND 1 - (embedding <=> (SELECT embedding FROM "Node" WHERE id = cast(${nodeId} as uuid))) > ${threshold} 
           ORDER BY score DESC 
@@ -140,10 +136,10 @@ class VectorService {
       }
 
       // Fallback to text-based search (calls Gemini)
-      return this.findSimilarNodes(fullText, type, threshold, limit);
+      return this.findSimilarNodes(fullText, threshold, limit);
     } catch (e) {
       console.error("[VectorService] findSimilarToNode error:", nodeId, e);
-      return this.findSimilarNodes(fallbackText, type, threshold, limit);
+      return this.findSimilarNodes(fallbackText, threshold, limit);
     }
   }
 

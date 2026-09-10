@@ -71,14 +71,19 @@ describe("MCP Memory Tools", () => {
   });
 
   describe("proposeMemory", () => {
-    it("should validate type", async () => {
-      const res = await proposeMemory("Title", "Content", "INVALID_TYPE", []);
-      expect(res).toContain("Error: type must be 'LESSON', 'CONTEXT', or 'FEATURE'");
+    it("should validate required label", async () => {
+      const res = await proposeMemory("", "Content", ["section:mistakes-to-avoid"]);
+      expect(res).toContain("Error: label must be provided");
     });
 
-    it("should require section tag for LESSON", async () => {
-      const res = await proposeMemory("Title", "Content", "LESSON", ["project:synapse"]);
-      expect(res).toContain("LESSON type requires a 'section:<name>' tag");
+    it("should validate required content", async () => {
+      const res = await proposeMemory("Title", "", ["section:mistakes-to-avoid"]);
+      expect(res).toContain("Error: content must be provided");
+    });
+
+    it("should require section tag for proposals", async () => {
+      const res = await proposeMemory("Title", "Content", ["project:synapse"]);
+      expect(res).toContain("Proposal requires a 'section:<name>' tag");
     });
 
     it("should successfully record proposal", async () => {
@@ -87,8 +92,8 @@ describe("MCP Memory Tools", () => {
         id: "prop-123",
       });
 
-      const res = await proposeMemory("Title", "Content", "CONTEXT", ["project:synapse"]);
-      expect(res).toContain("Success: Recorded CONTEXT 'Title' (ID: prop-123)");
+      const res = await proposeMemory("Title", "Content", ["section:mistakes-to-avoid", "project:synapse"]);
+      expect(res).toContain("Success: Recorded knowledge node 'Title' (ID: prop-123)");
     });
   });
 

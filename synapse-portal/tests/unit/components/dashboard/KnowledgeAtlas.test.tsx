@@ -54,8 +54,8 @@ describe("components/dashboard/KnowledgeAtlas", () => {
       id: "node-1",
       type: "TAG",
       properties: JSON.stringify({ scope: "scope1" }),
-    } as Node,
-    { id: "root-scope1", type: "ROOT_SCOPE" } as Node,
+    } as unknown as Node,
+    { id: "root-scope1", type: "ROOT_SCOPE" } as unknown as Node,
   ];
   const mockEdges: Edge[] = [
     { from_id: "node-1", to_id: "root-scope1" } as Edge,

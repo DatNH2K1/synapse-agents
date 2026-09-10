@@ -9,15 +9,12 @@ export const queryMemorySchema = {
 };
 
 export const proposeMemorySchema = {
-  label: z.string().describe("Short descriptive title of the node."),
-  content: z.string().describe("The full markdown/text content of the node."),
-  type: z
-    .enum(["LESSON", "CONTEXT", "FEATURE"])
-    .describe("One of 'LESSON', 'CONTEXT', or 'FEATURE'."),
+  label: z.string().describe("Short descriptive title of the knowledge node / lesson."),
+  content: z.string().describe("The full markdown/text content of the knowledge node / lesson."),
   tags: z
     .array(z.string())
     .describe(
-      "List of tags. If type is 'LESSON', at least one 'section:' tag is required.",
+      "List of tags. At least one 'section:' tag is required (e.g. 'section:mistakes-to-avoid', 'section:optimized-techniques', 'section:specialized-conventions', 'section:user-personals').",
     ),
 };
 

@@ -30,7 +30,6 @@ export async function handleToolCall(
       return await proposeMemory(
         String(args.label || ""),
         String(args.content || ""),
-        String(args.type || "CONTEXT"),
         (args.tags as string[]) || [],
       );
     case McpToolName.APPROVE_PROPOSAL:

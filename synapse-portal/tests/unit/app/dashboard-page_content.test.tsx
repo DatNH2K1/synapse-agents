@@ -54,8 +54,6 @@ describe("app/(dashboard)/dashboard/page_content", () => {
     {
       id: "node-1",
       label: "Node 1",
-      type: "LESSON",
-      content_hash: "h-1",
       success_count: 5,
       last_verified: new Date("2026-06-01T00:00:00.000Z"),
       properties: JSON.stringify({ content: "Lesson content details" }),
@@ -108,8 +106,6 @@ describe("app/(dashboard)/dashboard/page_content", () => {
     {
       id: "node-2",
       label: "Node 2",
-      type: "CONCEPT",
-      content_hash: "h-2",
       success_count: 2,
       last_verified: new Date("2026-06-02T00:00:00.000Z"),
       properties: JSON.stringify({ content: "Concept content details" }),
@@ -121,8 +117,6 @@ describe("app/(dashboard)/dashboard/page_content", () => {
     {
       id: "node-3",
       label: "Node Lesson with a very long label name",
-      type: "LESSON",
-      content_hash: "h-3",
       success_count: 10,
       last_verified: new Date("2026-06-03T00:00:00.000Z"),
       properties: JSON.stringify({ content: "Another Lesson" }),

@@ -62,7 +62,7 @@ export default function ProposalCard({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="rounded-md bg-accent-primary/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-accent-primary">
-              {update.type}
+              {update.tags.find((t) => t.scope === "section")?.name || "LESSON"}
             </span>
             {(() => {
               const bestTag =

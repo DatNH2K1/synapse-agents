@@ -174,7 +174,7 @@ export default function EvolutionTimeline({
                         </span>
                       )}
                       <span className="rounded bg-accent-primary/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-accent-primary border border-accent-primary/20">
-                        {log.type}
+                        {log.tags.find((t) => t.scope === "section")?.name || "LESSON"}
                       </span>
                       {(() => {
                         const bestTag =

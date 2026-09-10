@@ -17,7 +17,6 @@ export async function GET() {
       select: {
         id: true,
         label: true,
-        type: true,
         properties: true,
         status: true,
         memory_tier: true,
@@ -49,7 +48,6 @@ export async function GET() {
       return {
         id: node.id,
         label: node.label,
-        type: node.type,
         properties: node.properties,
         status: node.status,
         memory_tier: node.memory_tier,

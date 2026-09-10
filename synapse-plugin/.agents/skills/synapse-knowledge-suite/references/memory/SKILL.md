@@ -68,7 +68,7 @@ To ensure consistent retrieval, all tags **MUST** follow the `scope:value` forma
 
 | Scope        | Definition                                                                                                                                                                             | Example                       | Requirement Level                                                 |
 | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------- |
-| `section`    | Mandatory category for lessons (defines where it appears in the Portal).                                                                                                               | `section:mistakes-to-avoid`   | **Required** for all proposed nodes.                             |
+| `section`    | Mandatory category for lessons (defines where it appears in the Portal).                                                                                                               | `section:mistakes-to-avoid`   | **Required** for all proposed nodes.                              |
 | `project`    | Links knowledge to the specific repository root folder containing `.git`.                                                                                                              | `project:synapse-portal`      | **Required** for project-specific nodes (unless `global` is set). |
 | `global`     | Sets global-wide visibility, making the knowledge node accessible across all projects.                                                                                                 | `global:global`               | **Required** if `project` scope is NOT provided.                  |
 | `technology` | Defines the tech stack or library related to the insight.                                                                                                                              | `technology:react@18`         | **Optional**.                                                     |
@@ -129,7 +129,11 @@ Use the **`propose_memory`** MCP tool to submit the knowledge node:
 {
   "label": "Colocate Server Actions",
   "content": "Always co-locate server actions with their form components to improve maintainability.",
-  "tags": ["section:optimized-techniques", "technology:nextjs", "project:synapse-portal"]
+  "tags": [
+    "section:optimized-techniques",
+    "technology:nextjs",
+    "project:synapse-portal"
+  ]
 }
 ```
 

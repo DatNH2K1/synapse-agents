@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## feat/combine_portal_mcp
+
+### Overview
+
+- Merged `synapse-mcp` directly into `synapse-portal`, eliminating Python virtual environments and establishing a unified TypeScript Model Context Protocol (MCP) server architecture with direct Prisma ORM access, dual SSE/HTTP API endpoints, and a standalone Stdio CLI runner.
+
+### BUSINESS LOGIC
+
+- Migrated knowledge management tools (`query_memory`, `propose_memory`, `approve_proposal`, `reject_proposal`, `increment_efficacy`, `list_nodes`) from Python `urllib` HTTP calls to direct internal database queries via Prisma and `knowledgeService`, reducing request latency and eliminating cross-process network hops.
+- Re-implemented all supporting developer and designer skills logic in native TypeScript:
+  - `better_auth`: Generates full Better Auth TypeScript configuration and updates `.env` files.
+  - `context_analyzer`: Evaluates token budgets, context degradation, attention distribution, and risk scoring.
+  - `docs_seeker`: Queries context7.com and analyzes `llms.txt` structures.
+  - `copywriting`: Analyzes writing style templates, metrics, and structural formats.
+  - `distillator`: Assesses source document token loads, document types, and fan-out routing recommendations.
+  - `design_system`: Performs BM25-style search over curated UI/UX CSV datasets.
+  - `ai_artist`: Searches and synthesizes prompt engineering templates for image models.
+  - `repo_indexer`: Queries and synchronizes code symbols and dependency graphs.
+
+### IMPACT
+
+- Developers and AI agents now only need a single service (`synapse-portal`) without requiring Python, `.venv`, or `fastmcp` dependencies installed on the system.
+- Build and packaging times for Antigravity plugins are substantially faster and free from OS-specific Python environment setup failures.
+
+### NEW FEATURES
+
+- Added native MCP server registry in `synapse-portal/mcp/server.ts` utilizing `@modelcontextprotocol/sdk` and `zod`.
+- Added App Router MCP endpoints in `synapse-portal/app/api/mcp/route.ts`, `app/api/mcp/sse/route.ts`, and `app/api/mcp/messages/route.ts` supporting standard JSON-RPC tool discovery and Server-Sent Events (SSE) streaming (`serverUrl` remote transport).
+- Added standalone Stdio runner in `synapse-portal/scripts/mcp_server.ts` for local IDEs and CLI agents.
+
+### BUG FIXES
+
+- Fixed MCP SSE endpoint URL generation in `synapse-portal/app/api/mcp/sse/route.ts` by using relative URLs instead of internal container host addresses, preventing `Endpoint origin does not match connection origin` and connection failures across container port mappings.
+- Added HTTP POST dispatch support directly to `synapse-portal/app/api/mcp/sse/route.ts` to support both Streamable HTTP/POST transports and Server-Sent Events (SSE).
+- Fixed missing `tools/list`, `prompts/list`, and notification routing in `synapse-portal/app/api/mcp/messages/route.ts` when communicating over SSE stream.
+- Fixed MCP server startup failure (`MODULE_NOT_FOUND: Cannot find module '@/mcp/server'`) when launched via CLI/Antigravity from arbitrary working directories by switching to relative imports (`../mcp/server`, `../../lib/db`) in `scripts/mcp_server.ts` and `mcp/**` services, and passing `--tsconfig` in `build_antigravity_plugin.ts`.
+
+### IMPROVEMENTS
+
+- Restructured MCP layer from `synapse-portal/lib/mcp` into top-level modular domain folders under `synapse-portal/mcp/` (`ai_artist`, `better_auth`, `context_analyzer`, `copywriting`, `design_system`, `distillator`, `docs_seeker`, `memory`, `repo_indexer`).
+- Replaced the legacy `index_repo.py` Python AST parser and templates with a native high-performance TypeScript parser (`mcp/repo_indexer/parser.ts`), achieving 100% pure TypeScript codebase without any Python runtime dependencies.
+- Created `McpToolName` enum (`mcp/enums.ts`), central tool dispatcher (`mcp/handler.ts`), and manifest definitions (`mcp/manifest.ts`), completely decoupling API endpoints (`app/api/mcp/route.ts`, `app/api/mcp/messages/route.ts`) into lightweight routers.
+- Standardized file structure across all tool directories using concise, unified conventions: `schema.ts` (Zod schemas), `service.ts` (business logic), `service.test.ts` (unit tests), `service.spec.ts` (real DB integration specs), and `index.ts` (MCP tool registration using `McpToolName`).
+- Added real PostgreSQL integration spec tests (`mcp/memory/service.spec.ts`, `mcp/repo_indexer/service.spec.ts`) and added `"test:spec"` command to `package.json`.
+- Co-located schemas (`schema.ts`), services (`service.ts`), MCP registrations (`index.ts`), asset dependencies (`data/`), unit tests (`service.test.ts`), and DB specs (`service.spec.ts`) within each tool directory.
+- Completely removed legacy `synapse-mcp` Python directory, `.ruff_cache`, and `.pytest_cache`, making the repository a pure TypeScript ecosystem.
+- Cleaned up redundant legacy HTTP REST APIs (`/api/context/export`, `/api/propose`, `/api/nodes/efficacy`, `/api/nodes`, `/api/edges`, `/api/stats`, `/api/indexer/ai/*`) that were previously only used as HTTP bridges for Python.
+- Updated `.github/workflows/ci.yml` and `Makefile` to remove Python test/lint jobs and outdated file references.
+- Updated plugin packaging script `synapse-portal/scripts/build_antigravity_plugin.ts` to automatically wire the TypeScript MCP server runner and eliminate Python virtualenv bootstrapping.
+- Replaced subshell `execSync` manifest generator invocation with direct in-process function execution in `build_antigravity_plugin.ts` for instant, non-blocking manifest generation.
+- Added comprehensive unit test suite in `synapse-portal/tests/mcp/` and `synapse-portal/mcp/**/` with 100% test pass rate and full coverage tracking.
+
+### DEPENDENCIES
+
+- Added `@modelcontextprotocol/sdk` and `zod` to `synapse-portal/package.json`.
+
 ## main
 
 ### Overview

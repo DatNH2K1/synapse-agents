@@ -6,20 +6,18 @@ An integrated agentic ecosystem for the **Synapse Knowledge Portal**, containing
 
 ## 🏗️ Architecture Overview
 
-The project consists of three core components that work in tandem to power autonomous development agents and provide a visual dashboard for their operations:
+The project consists of two core components that work in tandem to power autonomous development agents and provide a visual dashboard for their operations:
 
 ```mermaid
 graph TD
-    User([User]) <--> Portal[Synapse Portal - Next.js UI]
-    Agent[AI Agent - Antigravity] <--> Plugin[Synapse Plugin - Rules & Skills]
-    Agent <--> MCP[Synapse MCP Server - Python FastMCP]
-    MCP <--> Portal
+    User([User]) <--> Portal[Synapse Portal - Next.js UI & Native MCP API]
+    Agent[AI Agent - Antigravity / Cursor / Claude] <--> Plugin[Synapse Plugin - Rules & Skills]
+    Agent <-->|"MCP (SSE / HTTP / Stdio)"| Portal
     Portal <--> DB[(PostgreSQL Database)]
 ```
 
-1. **`synapse-portal`**: A premium Next.js dashboard that visualizes knowledge graphs, stores developer memory, hosts user personas, and exposes REST APIs/Prisma interfaces to the backend database.
-2. **`synapse-mcp`**: A Python-based Model Context Protocol (MCP) server that acts as a bridge, exposing advanced developer capability tools and database operations to AI agents by interacting with the `synapse-portal` backend APIs.
-3. **`synapse-plugin`**: A plugin for Google Antigravity containing 39 agent skills, 12 customized agent personas (e.g., Winston the Architect, Amelia the Web Dev), and execution rules.
+1. **`synapse-portal`**: A premium Next.js dashboard and fullstack server that visualizes knowledge graphs, stores developer memory, hosts user personas, exposes REST APIs, and provides a native Model Context Protocol (MCP) server (SSE & Stdio).
+2. **`synapse-plugin`**: A plugin for Google Antigravity containing 39 agent skills, 12 customized agent personas (e.g., Winston the Architect, Amelia the Web Dev), and execution rules.
 
 ---
 
@@ -27,14 +25,12 @@ graph TD
 
 ```text
 synapse-agents/
-├── synapse-portal/       # Next.js Web App & Database Schema
-│   ├── app/              # Dashboard pages & UI components
+├── synapse-portal/       # Next.js Web App, DB Schema & Native MCP Server
+│   ├── app/              # Dashboard pages, UI components & MCP API routes
+│   ├── lib/              # Internal services, Prisma client & MCP tool modules
 │   ├── prisma/           # Schema definition & database seeding scripts
-│   ├── scripts/          # Automation scripts (e.g., config rendering, plugin building)
-│   └── tests/            # Portal unit & integration test suites
-├── synapse-mcp/          # Model Context Protocol (MCP) Server
-│   ├── tools/            # Python-based MCP tools implementations
-│   └── requirements.txt  # Python environment dependencies
+│   ├── scripts/          # Automation scripts (config rendering, plugin building, mcp runner)
+│   └── tests/            # Portal unit, integration & MCP test suites
 ├── synapse-plugin/       # Google Antigravity Customizations
 │   ├── .agents/          # Source directory for custom rules, skills, and agent personas
 │   ├── docs/             # Technical specifications & documentation
@@ -53,7 +49,6 @@ Before running the workspace, ensure you have the following installed on your ma
 
 - **Docker & Docker Compose** (for running PostgreSQL and the Next.js production/dev servers)
 - **Node.js 20+ & npm** (for local scripts, linting, and formatting)
-- **Python 3.11+** (for running the Python virtual environment and the MCP server)
 - **Make** utility
 
 ---
@@ -123,13 +118,8 @@ This ensures that when an Antigravity agent starts in that workspace, it will au
 
 ---
 
-## 📖 Component Documentation
-
-For details about each sub-component, refer to their respective README files:
-
-- 🌐 **Web Dashboard & API:** [Synapse Portal](./synapse-portal/README.md)
+- 🌐 **Web Dashboard & Native MCP API:** [Synapse Portal](./synapse-portal/README.md)
 - 🤖 **Agent Plugin & Skills:** [Synapse Plugin](./synapse-plugin/README.md)
-- 🔌 **FastMCP Server:** [Synapse Mcp](./synapse-agents/synapse-mcp/README.md)
 
 ---
 

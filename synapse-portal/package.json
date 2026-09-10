@@ -11,6 +11,7 @@
     "db:seed": "npx prisma db seed",
     "prebuild": "npx prisma generate",
     "test": "vitest run",
+    "test:spec": "vitest run **/*.spec.ts",
     "test:silent": "vitest run --silent",
     "prettier": "npx prettier --write .",
     "check:lint": "eslint .",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@types/pg": "^8.20.0",
@@ -41,7 +43,8 @@
     "react-force-graph-2d": "^1.29.1",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.6.0",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@lingual/i18n-check": "^0.9.5",

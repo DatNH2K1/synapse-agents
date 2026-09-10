@@ -1,18 +1,10 @@
-.PHONY: check format check-py check-ts check-md format-py format-ts format-md test up down build restart seed migrate db-refresh dev link\:antigravity unlink\:antigravity render\:config build\:antigravity manifests
+.PHONY: check format check-ts check-md format-ts format-md test up down build restart seed migrate db-refresh dev link\:antigravity unlink\:antigravity render\:config build\:antigravity manifests
 
 # Run all code checks
-check: check-py check-ts check-md
+check: check-ts check-md
 
-# Format all code files (Python, TypeScript, Markdown)
-format: format-py format-ts format-md
-
-# Python checks and formatting
-check-py:
-	ruff check .
-
-format-py:
-	ruff format .
-	ruff check --fix .
+# Format all code files (TypeScript, Markdown)
+format: format-ts format-md
 
 # TypeScript checks (Linting, Type safety, Dependencies, i18n)
 check-ts:
@@ -23,10 +15,10 @@ format-ts:
 
 # Markdown formatting and checking
 check-md:
-	cd synapse-portal && npx prettier --check --no-error-on-unmatched-pattern "../README.md" "../synapse-portal/README.md" "../synapse-plugin/README.md" "../synapse-mcp/README.md" "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
+	npx --prefix synapse-portal prettier --check "**/*.md"
 
 format-md:
-	cd synapse-portal && npx prettier --write --no-error-on-unmatched-pattern "../README.md" "../synapse-portal/README.md" "../synapse-plugin/README.md" "../synapse-mcp/README.md" "../synapse-plugin/**/*.md" "../TODO.md" "../synapse-plugin/AGENTS.md"
+	npx --prefix synapse-portal prettier --write "**/*.md"
 
 # Run tests
 test:

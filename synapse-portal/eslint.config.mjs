@@ -22,7 +22,7 @@ const eslintConfig = defineConfig([
         {
           patterns: [
             {
-              regex: "^\\.\\.?\\/(app|components|lib)(\\/.*|$)",
+              regex: "^\\.\\.?\\/(app|components|lib|mcp)(\\/.*|$)",
               message:
                 "Please use path alias '@/' instead of relative imports (e.g. '@/lib/...' instead of '../../lib/...')",
             },
@@ -53,6 +53,7 @@ const eslintConfig = defineConfig([
     "node_modules/**",
     "scratch/**",
     "coverage/**",
+    "mcp/**/templates/**",
   ]),
 ]);
 

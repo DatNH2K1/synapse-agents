@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## fix/coding_level
+
+### Overview
+
+- Added mandatory first-turn reading of `config.toml` and routing through `@skills/synapse-agent-coordination/references/coding-level/SKILL.md` to dynamically load the active coding level guidelines.
+
+### BUSINESS LOGIC
+
+- Mandated that agents must read system configuration (`config.toml`) and immediately view the `synapse-coding-level` sub-skill in the first turn of every session, allowing the skill itself to route to the appropriate level guide (`coding-level-0-eli5.md`, `coding-level-3-senior.md`, etc.) and ensure tone/formatting compliance from the first response.
+
+### IMPROVEMENTS
+
+- Decoupled hardcoded coding-level filenames from rule files (`AGENTS.md` and `context-enforcement.md`) by delegating dispatch to `coding-level/SKILL.md`.
+
 ## feat/combine_portal_mcp
 
 ### Overview

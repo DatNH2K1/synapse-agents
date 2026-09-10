@@ -13,6 +13,8 @@ To optimize context usage, load and read only the relevant rule files when their
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/feature-spec-guidelines.md
 - **Context Enforcement & Memory Lifecycle (Universal Rule)**: Protocol for lazy context loading, .git Root Rule for project tagging, and mandatory Memory Lifecycle (`query_memory` at start, `increment_efficacy` during task, `propose_memory` upon completion).
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/context-enforcement.md
+- **Configuration & Active Coding Level**: Reading user preferences (`user_name`, `communication_language`, `coding_level`) from `config.toml` and applying communication and formatting constraints.
+  - **MANDATORY LOAD FIRST TURN**: Call `view_file` on `config.toml` to read `{coding_level}`, and immediately call `view_file` on @skills/synapse-agent-coordination/references/coding-level/SKILL.md to navigate and load the active coding level guidelines.
 
 ### 2. Command Execution & Local Config (Read when executing terminal commands or reading config.toml)
 

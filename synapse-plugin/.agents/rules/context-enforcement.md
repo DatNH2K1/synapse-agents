@@ -23,7 +23,7 @@ If only a command code is provided, you **MUST NOT** load context. Instead, you 
 
 ### 3. Agent Activation Protocol
 
-- **Apply Coding Level (MANDATORY):** Read `{coding_level}` from the system configuration (`config.toml`). Invoke the `synapse-coding-level` skill with `{coding_level}` to apply the corresponding communication, code, and response format constraints. Prepend every response with the status block declaring the assumed coding level (e.g. `[Assumed Coding Level: Level 3 - Advanced]`).
+- **Apply Coding Level (MANDATORY FIRST TURN):** In the first turn of every session, read `{coding_level}`, `{user_name}`, and `{communication_language}` from the system configuration (`config.toml`). Immediately view the coding level sub-skill at `@skills/synapse-agent-coordination/references/coding-level/SKILL.md` and follow its instructions to load the corresponding level guidelines. Prepend or format the response status block declaring the active coding level (e.g. `[Active Coding Level: Level 0 - ELI5]`).
 - **Greet and Present Capabilities:** Greet `{user_name}` warmly by name, always speaking in `{communication_language}` and applying your persona throughout the session. Present the capabilities table from the agent's definition. **STOP and WAIT for user input** — Do NOT execute menu items automatically.
 - **Capability Invocation:** When the user responds with a code, line number, or skill, check for the requirement. If missing, ask for it. Only then, invoke the exact registered skill by its exact name. DO NOT invent capabilities on the fly.
 

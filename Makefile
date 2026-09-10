@@ -77,17 +77,17 @@ dev:
 
 # Render agent configuration from .env
 render\:config:
-	npx tsx synapse-portal/scripts/render_config.ts
+	npx --prefix synapse-portal tsx synapse-portal/scripts/render_config.ts
 
 # Build antigravity plugin
 build\:antigravity: render\:config
-	npx tsx synapse-portal/scripts/build_antigravity_plugin.ts
+	npx --prefix synapse-portal tsx synapse-portal/scripts/build_antigravity_plugin.ts
 
 # Build and link antigravity plugin to global customizations
 link\:antigravity: render\:config
-	npx tsx synapse-portal/scripts/build_antigravity_plugin.ts --link
+	npx --prefix synapse-portal tsx synapse-portal/scripts/build_antigravity_plugin.ts --link
 
 # Generate portal manifests (agent-manifest.csv, skill-manifest.csv, tool-manifest.csv)
 manifests:
-	npx tsx synapse-portal/scripts/generate_manifests.ts
+	npx --prefix synapse-portal tsx synapse-portal/scripts/generate_manifests.ts
 

@@ -124,7 +124,6 @@ export const sleepCycleService = {
           // Find similar active nodes (APPROVED, BETA, GOLD) using database-level vector similarity
           const matches = await vectorService.findSimilarToNode(
             proposal.id,
-            proposal.type,
             proposal.label,
             0.5, // Grab anything with 50%+ similarity for checking
             5,
@@ -192,7 +191,6 @@ export const sleepCycleService = {
                 const unifiedNode = await tx.node.create({
                   data: {
                     label: synthesis.label,
-                    type: proposal.type,
                     status: "PENDING_MERGE",
                     memory_tier: "ACTIVE",
                     properties: JSON.stringify({
@@ -532,7 +530,6 @@ export const sleepCycleService = {
         // Match nodes in cluster with similarity > 80% (0.80) using vector service
         const matches = await vectorService.findSimilarToNode(
           nodeA.id,
-          nodeA.type,
           nodeA.label,
           0.8,
           5,
@@ -574,7 +571,6 @@ export const sleepCycleService = {
                 data: {
                   id: randomUUID(),
                   label: `🔮 Crystal: ${synthesis.label}`,
-                  type: nodeA.type,
                   status: "PENDING_MERGE",
                   memory_tier: "CORE",
                   properties: JSON.stringify({

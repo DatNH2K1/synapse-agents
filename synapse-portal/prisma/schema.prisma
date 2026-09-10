@@ -13,9 +13,7 @@ datasource db {
 
 model Node {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  type          String   @default("LESSON") // LESSON, CONTEXT, FEATURE
   label         String
-  content_hash  String?
   success_count Int      @default(0)
   last_verified DateTime @default(now())
   properties    String? // JSON string

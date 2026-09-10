@@ -16,7 +16,8 @@ const KnowledgeGraph = dynamic(() => import("@/components/KnowledgeGraph"), {
 });
 
 import KnowledgeExplorer from "@/components/shared/KnowledgeExplorer";
-import { Node, Edge, Tag } from "@/lib/db";
+import { Edge, Tag } from "@/lib/db";
+import { AtlasNode } from "@/components/KnowledgeGraph";
 import { useI18n } from "@/lib/i18n";
 import { groupTagsByScope, getConnectedTagIds } from "@/lib/graph-theme";
 
@@ -25,7 +26,7 @@ export default function KnowledgeAtlas({
   edges,
   tags = [],
 }: {
-  nodes: Node[];
+  nodes: AtlasNode[];
   edges: Edge[];
   tags?: Tag[];
 }) {

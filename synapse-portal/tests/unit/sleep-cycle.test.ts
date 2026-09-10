@@ -24,9 +24,7 @@ function asMock<TReturn>(func: object): MockMethod<TReturn> {
 
 const createMockNode = (overrides: Partial<Node> = {}): Node => ({
   id: "mock-node-id",
-  type: "LESSON",
   label: "Mock Label",
-  content_hash: null,
   success_count: 0,
   last_verified: new Date(),
   properties: "{}",

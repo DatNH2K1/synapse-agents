@@ -6,7 +6,7 @@ All agents MUST strictly follow this context loading and activation protocol:
 
 Execute steps A→D in order ONLY when a specific task (code) is initiated AND a specific requirement/story is provided. Do NOT load project-specific context during the initial greeting or when only a command code is selected without a requirement.
 
-- **A — Determine working repo:** Identify the active project slug (e.g., `example-frontend` or `example-backend`) from the user's request. If ambiguous or missing context, ask: _"Which project and what is the specific task?"_
+- **A — Determine working repo (.git Root Rule):** Identify the active project slug (e.g., `flowops-fe` or `flowops-be`) strictly from the specific folder co-located with the `.git` directory. If multiple sub-projects/repositories exist, never use an umbrella parent folder without `.git`. If ambiguous or missing context, ask: _"Which project and what is the specific task?"_
 - **B — Read project docs (PRIORITY SOURCE):** Read ONLY `docs/development.md` and `docs/project-structure.md` in the working repo root. Do NOT read all `docs/*.md`. Information already covered in these docs must NOT be duplicated into the Knowledge Portal unless explicitly requested.
 - **C — Load Context via Knowledge Portal:** Execute JIT Grounding by invoking the `synapse-memory` skill. Read `skills/synapse-memory/SKILL.md` for exact instructions and commands.
 - **D — Repository Indexing & AST Scan:** Invoke the `index_repository` MCP tool on the working repository directory. This builds/updates the AST dependency tree in the Synapse Portal database, enabling precise code navigation, dependency analysis, and semantic queries instead of searching files manually.
@@ -36,8 +36,8 @@ Agents MUST strictly execute the memory lifecycle workflows across all task phas
 2. **Implementation Phase (EFFICACY Tracking)**:
    - If a retrieved memory node directly helps solve or guide the implementation, the agent MUST immediately invoke `increment_efficacy` with the node's UUID to record its practical success.
 3. **Completion Phase (WRITE / Propose Memory)**:
-   - At the end of a sprint, story, or task, the agent MUST evaluate if there is any new reusable lesson, design pattern, or feature architecture.
-   - If yes, propose it using `propose_memory` in English with correct tags and section scopes (`section:<name>`, `project:<name>`). Do not record minor/trivial changes.
+   - At the end of a sprint, story, or task, the agent MUST evaluate if there is any new reusable lesson, engineering convention, or gotcha to avoid.
+   - If yes, propose it using `propose_memory` in English with correct tags and mandatory section scopes (`section:<name>`, `project:<name>` where `project` matches the `.git` root folder name). Do not record minor/trivial changes.
 
 ### 5. Prioritize Dedicated MCP Tools & Hierarchy (CRITICAL)
 

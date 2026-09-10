@@ -39,11 +39,10 @@ describe("Memory Service - Real DB Integration Spec", () => {
     const result = await proposeMemory(
       testLabel,
       "This is a real integration test content saved to PostgreSQL.",
-      "FEATURE",
-      ["project:integration-test", "type:spec"],
+      ["section:optimized-techniques", "project:integration-test", "type:spec"],
     );
 
-    expect(result).toContain("Success: Recorded FEATURE");
+    expect(result).toContain("Success: Recorded knowledge node");
     const idMatch = result.match(/\(ID:\s*([^\)]+)\)/);
     expect(idMatch).toBeTruthy();
     testNodeId = idMatch ? idMatch[1].trim() : null;

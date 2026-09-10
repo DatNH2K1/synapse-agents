@@ -1,13 +1,13 @@
 import { Node, Tag } from "./db";
 import { Edge as DbEdge } from "./db";
 
-export function getNodeColor(node: Node & { color?: string }): string {
-  if (node.type === "TAG") return (node as Node & Tag).color || "#818cf8";
+export function getNodeColor(node: Node & { color?: string; type?: string }): string {
+  if (node.type === "TAG") return (node as unknown as Tag).color || "#818cf8";
   return node.color || "#64748b";
 }
 
-export function getNodeCategoryLabel(node: Node): string {
-  return node.type || "Knowledge Node";
+export function getNodeCategoryLabel(_node: Node): string {
+  return "Knowledge Node";
 }
 
 export function groupTagsByScope(tags: Tag[]) {

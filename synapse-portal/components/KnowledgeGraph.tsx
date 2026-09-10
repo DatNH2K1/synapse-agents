@@ -28,12 +28,14 @@ interface GraphLink {
   type: string;
 }
 
+export type AtlasNode = DbNode & { type?: string; color?: string; val?: number };
+
 export default function KnowledgeGraph({
   nodes,
   edges,
   onRef,
 }: {
-  nodes: DbNode[];
+  nodes: AtlasNode[];
   edges: DbEdge[];
   onRef?: (ref: {
     zoomIn: () => void;
@@ -54,14 +56,14 @@ export default function KnowledgeGraph({
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
 
   const graphData = useMemo(() => {
-    const gNodes: GraphNode[] = nodes.map((n: DbNode) => {
+    const gNodes: GraphNode[] = nodes.map((n: AtlasNode) => {
       const isRoot = n.type === "ROOT_SCOPE";
       const isTag = n.type === "TAG";
       const isCore = n.memory_tier === "CORE";
       return {
         id: n.id,
         label: n.label,
-        type: n.type,
+        type: n.type || "LESSON",
         memory_tier: n.memory_tier || "ACTIVE",
         categoryLabel: isRoot
           ? "ROOT"
@@ -73,11 +75,9 @@ export default function KnowledgeGraph({
           ? 18
           : isTag
             ? 10
-            : n.type === "Feature"
-              ? 5
-              : isCore
-                ? 8
-                : 3,
+            : isCore
+              ? 8
+              : 3,
         color:
           n.memory_tier === "COLD"
             ? "#38bdf8"

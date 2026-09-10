@@ -225,7 +225,6 @@ export default function TheGate({
         id: proposal.id,
         label: proposal.label,
         content: parsedProps.content || "No content provided.",
-        type: proposal.type,
         isProposal: true,
       },
       ...masters.map((m) => {
@@ -234,7 +233,6 @@ export default function TheGate({
           id: m.id,
           label: m.label,
           content: parsedMProps.content || "No content provided.",
-          type: m.type,
           isProposal: false,
         };
       }),
@@ -259,7 +257,6 @@ export default function TheGate({
         sourceNodeIds: allIds,
         proposalId: proposal.id,
         label: data.label,
-        type: masters[0].type,
         content: data.content,
         reason: data.reason,
         selectedTagIds: intersectionTagIds,
@@ -309,7 +306,6 @@ export default function TheGate({
           sourceNodeIds: allIds,
           proposalId: proposal.id,
           ...synthesis,
-          type: masters[0].type,
           selectedTagIds: intersectionTagIds,
           similarityScore: Math.max(
             ...(proposal.matches
@@ -339,7 +335,6 @@ export default function TheGate({
           reason: mergeData.reason,
           similarityScore: mergeData.similarityScore,
           newLabel: mergeData.label,
-          newType: mergeData.type,
           newContent: mergeData.content,
           action: "MERGE",
         }),

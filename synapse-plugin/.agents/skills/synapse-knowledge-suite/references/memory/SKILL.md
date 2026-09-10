@@ -37,20 +37,9 @@ Do **NOT** record a knowledge node for:
 - Simple, localized changes that have no architectural impact, safety implications, or reuse potential.
 - Cluttering the database with localized implementation details.
 
-### 📌 Node Type Selection Criteria
+### 📌 Knowledge Node & Lesson Model
 
-Only record when there is a significant, reusable insight or documentation requirement. Choose the type strictly according to these boundaries:
-
-1. **`LESSON`**:
-   - **Definition**: A rule, pattern, best practice, or anti-pattern to prevent future mistakes or maintain strict coding standards.
-   - **Example**: Mandatory security headers, API route conventions, or a lesson learned from a major bug.
-2. **`FEATURE`**:
-   - **Definition**: Complete technical documentation of a newly shipped major feature, database schema, API design, or workspace integration.
-   - **Example**: A newly implemented OAuth login flow, indexing job, or dashboard page structure.
-
-3. **`CONTEXT`**:
-   - **Definition**: High-level domain context, core architectural designs (ADRs), external API integration flows, or permanent system design guidelines.
-   - **Example**: Overall system architecture, design rules for multi-agent execution, or business domain boundaries.
+All long-term memories in Synapse Portal are stored as **Atomic Knowledge Nodes (Lessons & Heuristics)**. Synapse intentionally does NOT store raw conversational context or ephemeral feature specifications in the Knowledge Graph; all categorization is handled purely through semantic tags (`section:*`, `project:*`, `technology:*`, `agent:*`).
 
 ---
 
@@ -59,7 +48,9 @@ Only record when there is a significant, reusable insight or documentation requi
 To prevent cross-project context contamination, all agents MUST follow these rules when using `synapse-memory`:
 
 1. **Zero Assumption Rule**: Never assume the project name (e.g., `project:synapse-portal`) from history or previous sessions.
-2. **Workspace Verification**: Before executing `query.py`, inspect the active workspace paths. If multiple projects are open (e.g., `synapse`), you MUST confirm the target project with the user.
+2. **Workspace Verification & `.git` Root Rule (CRITICAL)**:
+   - The value of `project:<name>` **MUST** strictly match the folder name directly containing the `.git` directory of the target repository/project where the work actually occurs (e.g. `project:flowops-fe`, `project:flowops-be`, or `project:synapse-portal`).
+   - **NEVER** use an umbrella/parent container directory (such as `flowops`) if that parent directory is not itself the `.git` repository root.
 3. **Explicit Scoping**: All queries and records MUST include the `project:<name>` tag AND the calling agent's tag (e.g., `agent:synapse-agent-web-dev`):
    - The agent tag value **MUST** be the canonical agent folder name (e.g., the directory name under `agents/`, or the `name` column in [agent-manifest.csv](../../manifests/agent-manifest.csv)), NOT the persona display name.
    - Refer to [agent-manifest.csv](../../manifests/agent-manifest.csv) to retrieve the list of valid agents.
@@ -77,8 +68,8 @@ To ensure consistent retrieval, all tags **MUST** follow the `scope:value` forma
 
 | Scope        | Definition                                                                                                                                                                             | Example                       | Requirement Level                                                 |
 | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------- |
-| `section`    | Mandatory category for lessons (defines where it appears in the Portal).                                                                                                               | `section:mistakes-to-avoid`   | **Required** for `LESSON` type, N/A/Optional for other types.     |
-| `project`    | Links knowledge to a specific repository or project name.                                                                                                                              | `project:synapse-portal`      | **Required** for project-specific nodes (unless `global` is set). |
+| `section`    | Mandatory category for lessons (defines where it appears in the Portal).                                                                                                               | `section:mistakes-to-avoid`   | **Required** for all proposed nodes.                             |
+| `project`    | Links knowledge to the specific repository root folder containing `.git`.                                                                                                              | `project:synapse-portal`      | **Required** for project-specific nodes (unless `global` is set). |
 | `global`     | Sets global-wide visibility, making the knowledge node accessible across all projects.                                                                                                 | `global:global`               | **Required** if `project` scope is NOT provided.                  |
 | `technology` | Defines the tech stack or library related to the insight.                                                                                                                              | `technology:react@18`         | **Optional**.                                                     |
 | `agent`      | Identifies the agent who generated or is most relevant to the insight. Value **MUST** be the **agent folder name** (e.g. the directory under `agents/`), NOT the persona display name. | `agent:synapse-agent-web-dev` | **Optional/Recommended**.                                         |
@@ -118,8 +109,7 @@ All lessons are proposed to the Portal using the `SynapsePortal` MCP server (`pr
 Construct the knowledge node arguments following this schema:
 
 - **label**: Short descriptive title (string).
-- **type**: One of `LESSON`, `CONTEXT`, or `FEATURE`.
-- **content**: Detailed explanation/markdown content of the node.
+- **content**: Detailed explanation/markdown content of the lesson.
 - **tags**: List of strings (e.g. `["section:optimized-techniques", "project:synapse-portal"]`).
 
 ### Step 2 — Mandatory Section Tags
@@ -138,9 +128,8 @@ Use the **`propose_memory`** MCP tool to submit the knowledge node:
 ```json
 {
   "label": "Colocate Server Actions",
-  "type": "LESSON",
   "content": "Always co-locate server actions with their form components to improve maintainability.",
-  "tags": ["section:optimized-techniques", "technology:nextjs"]
+  "tags": ["section:optimized-techniques", "technology:nextjs", "project:synapse-portal"]
 }
 ```
 
@@ -217,36 +206,31 @@ When using MCP, the following administrative tools are also available:
 - **MCP Tool `propose_memory`**:
   ```json
   {
-    "label": "Tenant IDs",
-    "type": "LESSON",
-    "content": "Never hardcode tenant IDs in project-alpha.",
-    "tags": ["section:mistakes-to-avoid", "project:project-alpha"]
+    "label": "Tenant IDs Isolation",
+    "content": "Never hardcode tenant IDs in flowops-be. Always extract tenant scope from authenticated JWT context.",
+    "tags": [
+      "section:mistakes-to-avoid",
+      "project:flowops-be",
+      "technology:nestjs",
+      "agent:synapse-agent-web-dev"
+    ]
   }
   ```
 
-**User:** "Document the finished Auth feature for this project."
+**User:** "Record a pattern: Co-locate server actions with form components."
 → **Action:** Propose via the MCP tool.
 
 - **MCP Tool `propose_memory`**:
   ```json
   {
-    "label": "Auth System",
-    "type": "FEATURE",
-    "content": "Implemented Better Auth with Google and GitHub providers...",
-    "tags": ["project:synapse-portal", "technology:next-js"]
-  }
-  ```
-
-**User:** "Save the current project architecture context."
-→ **Action:** Propose via the MCP tool.
-
-- **MCP Tool `propose_memory`**:
-  ```json
-  {
-    "label": "Micro-file Architecture",
-    "type": "CONTEXT",
-    "content": "Project uses micro-file architecture for workflows to ensure atomic execution...",
-    "tags": ["project:synapse-portal", "type:architecture"]
+    "label": "Colocate Server Actions",
+    "content": "Keep server action files alongside form components to reduce cross-folder imports and improve maintainability.",
+    "tags": [
+      "section:optimized-techniques",
+      "project:flowops-fe",
+      "technology:nextjs",
+      "agent:synapse-agent-web-dev"
+    ]
   }
   ```
 

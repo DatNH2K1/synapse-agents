@@ -27,29 +27,29 @@ export async function queryMemory(tags: string[]): Promise<string> {
 export async function proposeMemory(
   label: string,
   content: string,
-  type: string,
   tags: string[],
 ): Promise<string> {
-  if (!["LESSON", "CONTEXT", "FEATURE"].includes(type)) {
-    return "❌ Error: type must be 'LESSON', 'CONTEXT', or 'FEATURE'.";
+  if (!label || !label.trim()) {
+    return "❌ Error: label must be provided.";
   }
 
-  if (type === "LESSON") {
-    if (!tags || !tags.some((t) => t.startsWith("section:"))) {
-      return "❌ Error: LESSON type requires a 'section:<name>' tag (e.g. 'section:mistakes-to-avoid').";
-    }
+  if (!content || !content.trim()) {
+    return "❌ Error: content must be provided.";
+  }
+
+  if (!tags || !tags.some((t) => t.startsWith("section:"))) {
+    return "❌ Error: Proposal requires a 'section:<name>' tag (e.g. 'section:mistakes-to-avoid', 'section:optimized-techniques', 'section:specialized-conventions', 'section:user-personals').";
   }
 
   try {
     const result = await knowledgeService.proposeKnowledge({
       label,
-      type: type as "LESSON" | "CONTEXT" | "FEATURE",
       content,
       tags: tags || [],
     });
 
     if (result.success && result.id) {
-      return `✅ Success: Recorded ${type} '${label}' (ID: ${result.id})`;
+      return `✅ Success: Recorded knowledge node '${label}' (ID: ${result.id})`;
     } else {
       return `❌ Failed: ${(result as { error?: string }).error || "Unknown error"}`;
     }
@@ -125,7 +125,7 @@ export async function listNodes(): Promise<string> {
       const tagsList = (n.tags as Tag[]) || [];
       const tagsStr = tagsList.map((t) => `${t.scope}:${t.name}`).join(", ");
       output.push(
-        `- **${n.label}** (${n.type})\n` +
+        `- **${n.label}**\n` +
           `  - ID: \`${n.id}\`\n` +
           `  - Status: \`${n.status}\` | Tier: \`${n.memory_tier}\` | Efficacy: \`${n.success_count}\`\n` +
           `  - Tags: [${tagsStr}]`,

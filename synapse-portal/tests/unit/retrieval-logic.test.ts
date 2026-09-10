@@ -242,7 +242,6 @@ describe("formatAsMarkdown", () => {
     const mockNodes = [
       {
         id: "node-1",
-        type: "LESSON",
         label: "Avoid direct mut",
         properties: JSON.stringify({ content: "Never mutate state directly." }),
         distance: 0.1234,
@@ -265,7 +264,6 @@ describe("formatAsMarkdown", () => {
       },
       {
         id: "node-2",
-        type: "FEATURE",
         label: "Auth Implementation",
         properties: JSON.stringify({ content: "Implemented Better Auth." }),
         distance: 0,
@@ -281,13 +279,12 @@ describe("formatAsMarkdown", () => {
       },
       {
         id: "node-3",
-        type: "CONTEXT",
         label: "Global Architecture",
         properties: JSON.stringify({ content: "Monolithic to microservices." }),
         distance: 0,
         tags: [],
       },
-    ] as Parameters<typeof knowledgeService.formatAsMarkdown>[0];
+    ] as unknown as Parameters<typeof knowledgeService.formatAsMarkdown>[0];
 
     const markdown = knowledgeService.formatAsMarkdown(mockNodes);
 
@@ -300,9 +297,9 @@ describe("formatAsMarkdown", () => {
     expect(markdown).toContain("## 📁 General Context & Other Knowledge");
 
     // Verify content and headings are correctly formatted
-    expect(markdown).toContain("#### 💡 [LESSON] Avoid direct mut");
-    expect(markdown).toContain("#### ✨ [FEATURE] Auth Implementation");
-    expect(markdown).toContain("#### 🔮 [CONTEXT] Global Architecture");
+    expect(markdown).toContain("#### 💡 Avoid direct mut");
+    expect(markdown).toContain("#### 💡 Auth Implementation");
+    expect(markdown).toContain("#### 💡 Global Architecture");
 
     // Verify other tags formatting
     expect(markdown).toContain("- **Tags**: `technology:react@18`");

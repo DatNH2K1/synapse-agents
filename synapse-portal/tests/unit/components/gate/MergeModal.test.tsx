@@ -97,19 +97,6 @@ describe("components/gate/MergeModal", () => {
       expect.objectContaining({ label: "New Merged Label" }),
     );
 
-    // Trigger type change
-    const typeLabel = screen.getByText("type_label");
-    const selectContainer = typeLabel.nextElementSibling;
-    const typeTrigger = selectContainer?.querySelector("button");
-    if (!typeTrigger) throw new Error("Could not find type trigger button");
-    fireEvent.click(typeTrigger);
-
-    const conceptOption = screen.getByText("Concept");
-    fireEvent.click(conceptOption);
-    expect(onUpdateMergeData).toHaveBeenCalledWith(
-      expect.objectContaining({ type: "Concept" }),
-    );
-
     // Trigger content change
     const contentTextarea = screen.getByDisplayValue("Synthesized content");
     fireEvent.change(contentTextarea, {

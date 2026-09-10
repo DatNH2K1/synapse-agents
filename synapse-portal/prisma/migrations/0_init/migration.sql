@@ -8,9 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "vector";
 -- CreateTable
 CREATE TABLE "Node" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "type" TEXT NOT NULL DEFAULT 'LESSON',
     "label" TEXT NOT NULL,
-    "content_hash" TEXT,
     "success_count" INTEGER NOT NULL DEFAULT 0,
     "last_verified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "properties" TEXT,

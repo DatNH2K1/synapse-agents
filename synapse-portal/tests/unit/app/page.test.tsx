@@ -89,7 +89,7 @@ describe("app/page", () => {
     expect(screen.getByTestId("landing-content")).toBeDefined();
     expect(screen.getByText("User: TestUser")).toBeDefined();
     expect(screen.getByText("Nodes: 2")).toBeDefined();
-    expect(screen.getByText("Lessons: 1")).toBeDefined();
+    expect(screen.getByText("Lessons: 2")).toBeDefined();
     expect(screen.getByText("Pending: 3")).toBeDefined();
     expect(screen.getByText("Tags: 1")).toBeDefined();
     expect(screen.getByText("Agents count: 2")).toBeDefined();

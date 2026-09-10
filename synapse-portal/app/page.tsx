@@ -29,7 +29,7 @@ export default async function LandingPage() {
   ]);
 
   const pendingCount = pendingUpdates.length;
-  const lessonCount = nodes.filter((n) => n.type === "LESSON").length;
+  const lessonCount = nodes.length;
 
   return (
     <LandingPageContent

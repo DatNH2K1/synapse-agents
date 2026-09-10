@@ -7,8 +7,14 @@ All notable changes to this project will be documented in this file.
 ### Overview
 
 - Merged `synapse-mcp` directly into `synapse-portal`, eliminating Python virtual environments and establishing a unified TypeScript Model Context Protocol (MCP) server architecture with direct Prisma ORM access, dual SSE/HTTP API endpoints, and a standalone Stdio CLI runner.
+- Streamlined knowledge storage into a pure **Lesson/Heuristics Architecture** by completely removing the redundant `type` field (`LESSON`, `CONTEXT`, `FEATURE`) from the schema, APIs, services, and MCP tools. All nodes are now pure atomic knowledge units categorized via semantic `section:*` tags.
+- Enforced the strict `.git Root Rule` across all skills and rules for `project:<name>` tagging, ensuring tag scopes always bind to the folder directly containing the `.git` directory rather than parent/umbrella directories.
 
 ### BUSINESS LOGIC
+
+- Replaced heterogeneous node categorization (`LESSON`, `CONTEXT`, `FEATURE`) with a lightweight, uniform lesson node design. Categorization and presentation structure are now driven entirely by `section:*` tags (`section:mistakes-to-avoid`, `section:optimized-techniques`, `section:specialized-conventions`, `section:user-personals`).
+- Updated `propose_memory` MCP tool schema and handlers to require at least one valid `section:*` tag and reject redundant `type` parameters.
+- Enforced `.git` repository boundary resolution for `project:<name>` tagging in multi-repo and monorepo workspaces so that submodules and sub-repos (e.g., `flowops-fe`, `flowops-be`) are accurately isolated.
 
 - Migrated knowledge management tools (`query_memory`, `propose_memory`, `approve_proposal`, `reject_proposal`, `increment_efficacy`, `list_nodes`) from Python `urllib` HTTP calls to direct internal database queries via Prisma and `knowledgeService`, reducing request latency and eliminating cross-process network hops.
 - Re-implemented all supporting developer and designer skills logic in native TypeScript:
@@ -53,6 +59,12 @@ All notable changes to this project will be documented in this file.
 - Updated plugin packaging script `synapse-portal/scripts/build_antigravity_plugin.ts` to automatically wire the TypeScript MCP server runner and eliminate Python virtualenv bootstrapping.
 - Replaced subshell `execSync` manifest generator invocation with direct in-process function execution in `build_antigravity_plugin.ts` for instant, non-blocking manifest generation.
 - Added comprehensive unit test suite in `synapse-portal/tests/mcp/` and `synapse-portal/mcp/**/` with 100% test pass rate and full coverage tracking.
+- Removed deprecated `type` property handling and table columns across `synapse-portal` backend services, UI components, dashboard charts, and unit test suites.
+
+### BREAKING CHANGES
+
+- Removed `type` (`LESSON` | `CONTEXT` | `FEATURE`) column from `model Node` in Prisma schema and database.
+- Removed `type` field from `propose_memory` tool arguments. Memory proposals must now use `section:*` tags (`section:mistakes-to-avoid`, `section:optimized-techniques`, `section:specialized-conventions`, `section:user-personals`) to determine knowledge classification.
 
 ### DEPENDENCIES
 

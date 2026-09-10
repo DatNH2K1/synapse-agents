@@ -95,26 +95,39 @@ export default function OverviewPageContent({
   }, [nodes]);
 
   const typeDistributionData = useMemo(() => {
-    const counts = {
-      LESSON: 0,
-      CONTEXT: 0,
-      FEATURE: 0,
+    const sectionCounts: Record<string, number> = {
+      "mistakes-to-avoid": 0,
+      "optimized-techniques": 0,
+      "specialized-conventions": 0,
+      "user-personals": 0,
     };
+    let otherCount = 0;
+
     nodes.forEach((node) => {
-      if (counts[node.type as keyof typeof counts] !== undefined) {
-        counts[node.type as keyof typeof counts]++;
+      const nodeTags = (node as Node & { tags?: Tag[] }).tags || [];
+      const secTag = nodeTags.find((t: Tag) => t.scope === "section");
+      if (secTag && sectionCounts[secTag.name] !== undefined) {
+        sectionCounts[secTag.name]++;
+      } else {
+        otherCount++;
       }
     });
-    return [
-      { name: t("lessons"), value: counts.LESSON, color: "#818cf8" },
-      { name: t("contexts"), value: counts.CONTEXT, color: "#a855f7" },
-      { name: t("features"), value: counts.FEATURE, color: "#ec4899" },
+
+    const items = [
+      { name: "Mistakes to Avoid", value: sectionCounts["mistakes-to-avoid"], color: "#ef4444" },
+      { name: "Optimized Techniques", value: sectionCounts["optimized-techniques"], color: "#3b82f6" },
+      { name: "Specialized Conventions", value: sectionCounts["specialized-conventions"], color: "#818cf8" },
+      { name: "User Personas", value: sectionCounts["user-personals"], color: "#10b981" },
     ];
-  }, [nodes, t]);
+    if (otherCount > 0) {
+      items.push({ name: "General / Other", value: otherCount, color: "#64748b" });
+    }
+    return items;
+  }, [nodes]);
 
   const topLessonsData = useMemo(() => {
     return [...nodes]
-      .filter((n) => n.type === "LESSON" && n.success_count > 0)
+      .filter((n) => n.success_count > 0)
       .sort((a, b) => b.success_count - a.success_count)
       .slice(0, 5)
       .map((n) => ({
@@ -221,7 +234,6 @@ export default function OverviewPageContent({
         label: formatFullTag(t.scope, t.name, t.version),
         color: t.color,
         val: 10,
-        content_hash: null,
         success_count: 0,
         last_verified: new Date(),
         properties: JSON.stringify({ scope: t.scope }),
@@ -230,7 +242,6 @@ export default function OverviewPageContent({
       })),
       ...effectiveMetaRoots.map((r) => ({
         ...r,
-        content_hash: null,
         success_count: 0,
         last_verified: new Date(),
         properties: JSON.stringify({ isRoot: true }),
@@ -305,7 +316,7 @@ export default function OverviewPageContent({
           style={{ "--delay-index": 2 } as React.CSSProperties}
           className="stagger-item"
           label={t("successful_lessons")}
-          value={nodes.filter((n) => n.type === "LESSON").length}
+          value={nodes.filter((n) => n.success_count > 0).length}
           icon={<ShieldCheck size={20} className="text-emerald-400" />}
         />
         <StatCard

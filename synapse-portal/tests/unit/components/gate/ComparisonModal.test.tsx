@@ -24,8 +24,6 @@ describe("components/gate/ComparisonModal", () => {
   const mockMatch: NodeWithTags = {
     id: "node-1",
     label: "Current Name",
-    type: "Feature",
-    content_hash: "hash-1",
     success_count: 1,
     last_verified: new Date(),
     properties: JSON.stringify({ content: "Current content details." }),

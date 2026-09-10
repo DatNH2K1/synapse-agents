@@ -24,16 +24,15 @@ export const TOOLS_MANIFEST: McpToolManifestItem[] = [
   },
   {
     name: McpToolName.PROPOSE_MEMORY,
-    description: "Propose a new knowledge node to the Synapse Knowledge Portal.",
+    description: "Propose a new knowledge node / lesson to the Synapse Knowledge Portal.",
     inputSchema: {
       type: "object",
       properties: {
-        label: { type: "string" },
-        content: { type: "string" },
-        type: { type: "string", enum: ["LESSON", "CONTEXT", "FEATURE"] },
-        tags: { type: "array", items: { type: "string" } },
+        label: { type: "string", description: "Title of the lesson / knowledge node" },
+        content: { type: "string", description: "Markdown content of the lesson" },
+        tags: { type: "array", items: { type: "string" }, description: "Tags including mandatory section tag" },
       },
-      required: ["label", "content", "type", "tags"],
+      required: ["label", "content", "tags"],
     },
   },
   {

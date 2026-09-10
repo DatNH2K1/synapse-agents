@@ -10,17 +10,16 @@ import { Node, Tag, Edge } from "@/lib/db";
 describe("lib/graph-theme", () => {
   describe("getNodeColor", () => {
     it("should return nodes standard color", () => {
-      const node = { id: "node-1", type: "LESSON", label: "My Lesson" } as Node;
+      const node = { id: "node-1", label: "My Lesson" } as unknown as Node;
       expect(getNodeColor(node)).toBe("#64748b");
     });
 
     it("should return nodes custom color if specified", () => {
       const node = {
         id: "node-1",
-        type: "LESSON",
         label: "My Lesson",
         color: "#ff0000",
-      } as object as Node;
+      } as unknown as Node;
       expect(getNodeColor(node)).toBe("#ff0000");
     });
 
@@ -45,12 +44,7 @@ describe("lib/graph-theme", () => {
   });
 
   describe("getNodeCategoryLabel", () => {
-    it("should return nodes type", () => {
-      const node = { id: "node-1", type: "LESSON" } as Node;
-      expect(getNodeCategoryLabel(node)).toBe("LESSON");
-    });
-
-    it("should return default value if type is empty", () => {
+    it("should return Knowledge Node as standard category label", () => {
       const node = { id: "node-1" } as Node;
       expect(getNodeCategoryLabel(node)).toBe("Knowledge Node");
     });

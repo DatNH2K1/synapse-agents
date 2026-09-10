@@ -9,6 +9,8 @@ To optimize context usage, load and read only the relevant rule files when their
 - **Changelog Guidelines**: Rules for creating and updating changelogs comparing with develop/main/master.
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/changelog-guidelines.md
   - **MANDATORY EXECUTION**: You MUST create/update the `CHANGELOG.md` file in English located directly at the `.git` root folder of the modified repository (co-located with `.git`, never in a parent folder without `.git`) before presenting the final result.
+- **Feature Specification & Flow Guidelines**: Rules for creating and maintaining granular feature catalogs (`FEATURES.md`) and UI flow specifications (`docs/features/*.md`) with strict relative paths.
+  - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/feature-spec-guidelines.md
 - **Context Enforcement & Memory Lifecycle (Universal Rule)**: Protocol for lazy context loading, .git Root Rule for project tagging, and mandatory Memory Lifecycle (`query_memory` at start, `increment_efficacy` during task, `propose_memory` upon completion).
   - **MANDATORY LOAD FIRST TURN**: Call `view_file` on @rules/context-enforcement.md
 

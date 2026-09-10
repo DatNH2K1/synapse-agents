@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := up
+
 .PHONY: check format check-ts check-md format-ts format-md test up down build restart seed migrate db-refresh dev link\:antigravity unlink\:antigravity render\:config build\:antigravity manifests
 
 # Run all code checks

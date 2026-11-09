@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## feat/feature_guideline
+
+### Overview
+
+- Authored complete living feature and business flow specifications in `FEATURES.md` and `docs/features/*.md` following the expanded Fullstack & Background Services documentation standard.
+- Formatted specifications with comprehensive UI interaction matrices, background worker scheduling tables, state machine transitions, and sequence diagrams.
+
+### NEW FEATURES
+
+- Rebuilt modular specifications under `docs/features/`:
+  - `01-landing-and-portal-overview.md`: Landing page & main overview dashboard actions and data flows.
+  - `02-the-gate-memory-curation.md`: Memory curation queue, diff merge workflow, and proposal state machine diagram.
+  - `03-dependency-graph-explorer.md`: AST dependency tree visualizer, orphan file discovery, and blast radius calculation query.
+  - `04-agent-catalog-and-settings.md`: Agent roster inspector, cultural personas explorer, and system configuration controls.
+  - `05-rem-sleep-cycle-worker.md`: REM sleep consolidation scheduling matrix, advisory lock protocol, and vector clustering pipeline.
+  - `06-codebase-indexer-engine.md`: AST extraction pipeline, MD5 hashing change detection, and symbol mapping.
+  - `07-mcp-cognitive-gateway.md`: MCP cognitive tool catalog and JSON-RPC 2.0 interface contracts.
+  - `08-realtime-event-pipeline.md`: SSE `/api/updates` event catalog, heartbeat handling, and reconnection flow.
+  - `09-multi-agent-orchestration.md`: Multi-agent roster matrix, master skills suite mapping, and delegation sequence diagram.
+- Updated root `FEATURES.md` master index with clean relative links to all 9 feature modules.
+
+### IMPROVEMENTS
+
+- Enhanced `synapse-plugin/.agents/rules/feature-spec-guidelines.md` with fullstack background worker patterns, data mapping matrices, and state machine guidelines.
+
 ## fix/coding_level
 
 ### Overview

@@ -1,44 +1,41 @@
-# Module: Agent Catalog, Persona Profiles & System Settings
+# Module: Agent Catalog & Settings
 
 [⬅ Back to Feature Catalog](../../FEATURES.md)
 
-## 1. Screen: Agent Catalog & Personas (`/agents`)
+## 1. Screen: Agent Catalog (`/agents`)
 
-### A. UI Elements & Action Matrix
+### A. Actors & Business Objectives
 
-| Element Name                   | Component Type                    | Visibility / Conditions            | Interaction & Business Flow                                                                                                                                                                                                                           |
-| :----------------------------- | :-------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Agent Roster Cards**         | Interactive 3D Cards (`TiltCard`) | Always visible                     | Renders all loaded agent personas (Analyst, Architect, Creative, CTO, Game Dev, Mobile Dev, PM, QA, Tech Writer, User Advocate, Web Dev) with avatar, title, and capability chips.                                                                    |
-| **Agent Detail Modal**         | Rich Dialog Modal                 | Opened upon clicking an agent card | Contains tabbed inspector: **Overview** (Identity, Communication style, Core principles), **System Protocols** (Compliance checklist, Gatekeeper rules, Context loading sequence), and **Capabilities & Tools** (Mapped capability codes and skills). |
-| **User Personas Grid**         | Interactive Cards (`TiltCard`)    | Always visible                     | Renders cultural user personas with avatar, location, tech literacy score, description, cultural traits, and specific pain points.                                                                                                                    |
-| **Persona Search & Filter**    | Search Bar & Region Pills         | Always visible                     | Filters user personas by search keyword or geographic region (`All`, `North America`, `Asia Pacific`, `Europe`, `Latin America`, `Middle East & Africa`).                                                                                             |
-| **Technical Skills Directory** | Feature List Cards                | Always visible                     | Displays available master skills (`synapse-agent-coordination`, `synapse-code-scan`, `synapse-design-suite`, `synapse-development-suite`, `synapse-knowledge-suite`, `synapse-qa-and-security-suite`).                                                |
-| **System Tools Directory**     | Terminal Card List                | Always visible                     | Displays registered system execution tools and MCP tool integrations.                                                                                                                                                                                 |
+- **Primary Actors**: Tech Leads, Project Managers, Software Engineers.
+- **Business Goal**: Inspect the specialized competencies of the 11 AI agents in the project roster, review permitted tool suites, and explore cross-cultural user personas to validate empathetic multi-regional behavior.
+
+### B. UI Elements & Business Action Matrix
+
+| UI Element                 | Interaction Type      | Visibility / Conditions   | Business Behavior & Rules                                                                                                                                                            |
+| :------------------------- | :-------------------- | :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Agent Roster Grid**      | Grid of Agent Cards   | Always visible            | Displays all 11 specialized agent personas (Business Analyst, Architect, Creative Innovator, CTO Advisor, Game Dev, Mobile Dev, PM, QA Hacker, Tech Writer, User Advocate, Web Dev). |
+| **Persona Detail Drawer**  | Slide-out Sheet       | On clicking an Agent card | Inspects communication style guidelines, operational bounds, active coding levels, and authorized capability suites.                                                                 |
+| **Cultural User Personas** | Persona Cards Sub-tab | Always visible            | Provides realistic simulated user archetypes (Japanese Enterprise, US Silicon Valley Startup, Vietnamese SME) to test prompt localization responses.                                 |
 
 ---
 
-## 2. Screen: System Settings (`/settings`)
+## 2. Screen: System Settings & Governance (`/settings`)
 
-### A. UI Elements & Action Matrix
+### A. UI Elements & Business Action Matrix
 
-| Element Name                    | Component Type               | Visibility / Conditions | Interaction & Business Flow                                                                                                                                       |
-| :------------------------------ | :--------------------------- | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Settings Tab Navigator**      | Tab Switcher                 | Always visible          | Switches between **Identity Profile**, **Agent Co-Pilot & AI Infrastructure**, and **Tag Appearance**.                                                            |
-| **Identity Card**               | Profile Card                 | Visible on Profile Tab  | Displays configured user name (`user_name`) and local instance authorization state.                                                                               |
-| **AI Infrastructure Status**    | Status Matrix                | Visible on Profile Tab  | Displays active Gemini AI model name, embedding model (`gemini-text-embedding-004`), and API token status for Stitch, Context7, and Gemini.                       |
-| **Brain Connectivity**          | Status Card                  | Visible on Profile Tab  | Shows PostgreSQL + `pgvector` engine status and atomic commit configuration.                                                                                      |
-| **REM Sleep Mode Switch**       | Toggle Switch                | Visible on AI Tab       | Updates `rem_mode_enabled` in `SystemConfig` (`true`/`false`). Controls automated background sleep cycle consolidation.                                           |
-| **Forget Mode Switch**          | Toggle Switch                | Visible on AI Tab       | Updates `forget_mode_enabled` in `SystemConfig` (`true`/`false`). Enables memory decay loops for inactive knowledge nodes.                                        |
-| **Forget Dry Run Switch**       | Toggle Switch                | Visible on AI Tab       | Updates `forget_dry_run_enabled` in `SystemConfig` (`true`/`false`). Simulates decay calculations in logs without destructive DB tier changes.                    |
-| **Similarity Threshold Slider** | Range Slider ($0.00 - 1.00$) | Visible on AI Tab       | Sets `rem_similarity_threshold` (default $0.85$). Nodes above this score require comparison/review.                                                               |
-| **Confidence Threshold Slider** | Range Slider ($0.00 - 1.00$) | Visible on AI Tab       | Sets `rem_confidence_threshold` (default $0.90$). Proposals above this score are automatically consolidated into merge candidates.                                |
-| **Tag Appearance Palette**      | Color Picker List            | Visible on Tags Tab     | Lists all database tags with scope and version. Clicking color indicator opens native color picker and calls `POST /api/visual-config` to persist hex color code. |
+| Configuration Item             | Control Type          | Valid Range / Scope             | Business Intent & Rules                                                                                                  |
+| :----------------------------- | :-------------------- | :------------------------------ | :----------------------------------------------------------------------------------------------------------------------- |
+| **AI & Database Connectivity** | Status Indicators     | Healthy / Disrupted             | Measures end-to-end response latency of model providers and transactional availability of persistence stores.            |
+| **REM Sleep Interval**         | Range Slider          | 10 mins to 24 hours             | Regulates how frequently background workers consolidate, cluster, and crystallize accumulated lessons.                   |
+| **Forget Mode Toggle**         | Binary Switch         | Enabled / Disabled              | When enabled, automatically purges unreferenced session-scoped notes that delivered zero efficacy after 30 days.         |
+| **Similarity Threshold**       | Ratio Slider          | $50\% - 99\%$ (Default: $82\%$) | Sets semantic threshold required before two candidate lessons are consolidated as duplicate knowledge.                   |
+| **Confidence Cutoff**          | Ratio Slider          | $10\% - 100\%$                  | Minimum confidence required to automatically approve high-efficacy lessons without human review.                         |
+| **Tag Visual Palette**         | Color Swatch Picker   | Hex Color Palette               | Assigns distinct visual color codes to knowledge domains for rapid cognitive recognition on the dashboard.               |
+| **"Save Configuration"**       | Primary Action Button | Enabled on dirty state          | Validates parameter boundaries, applies updates immediately to running background tasks, and emits a notification event. |
 
-### B. Business & User Flows
+---
 
-#### Flow 2.1: Dynamic Configuration Update
+## 3. Governance & Safety Constraints
 
-1. Admin user modifies a toggle switch or threshold slider on `/settings`.
-2. UI performs optimistic state update and dispatches `POST /api/system-config` with `{ key, value }`.
-3. Backend updates `SystemConfig` table in PostgreSQL.
-4. Next.js router refreshes data smoothly.
+- All configuration changes must be recorded in the audit log with the identity of the modifying actor.
+- Sleep cycle intervals under 10 minutes are prohibited to prevent computational contention and excessive model API usage.

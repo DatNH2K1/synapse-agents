@@ -42,6 +42,19 @@ function linkPlugin(buildDir: string) {
   try {
     fs.cpSync(buildDir, destLink, { recursive: true });
     console.log(`Successfully copied build folder to ${destLink}`);
+
+    // Link/Sync native Custom Agents directly to global ~/.gemini/config/agents/
+    const globalAgentsDir = path.join(home, ".gemini", "config", "agents");
+    if (!fs.existsSync(globalAgentsDir)) {
+      fs.mkdirSync(globalAgentsDir, { recursive: true });
+    }
+    const buildAgentsDir = path.join(buildDir, "agents");
+    if (fs.existsSync(buildAgentsDir)) {
+      fs.cpSync(buildAgentsDir, globalAgentsDir, { recursive: true });
+      console.log(
+        `Successfully linked Custom Agents to global AG directory at: ${globalAgentsDir}`,
+      );
+    }
   } catch (e) {
     console.error(`Error copying plugin to destination:`, e);
     return;
@@ -313,11 +326,10 @@ function main() {
     }
   }
 
-  // 7. Copy skills (both from .agents/skills and .agents/agents since agent personas are skills with SKILL.md)
+  // 7. Copy skills
   const destSkills = path.join(buildDir, "skills");
   fs.mkdirSync(destSkills, { recursive: true });
 
-  // Copy from .agents/skills
   const srcSkills = path.join(srcAgentsDir, "skills");
   if (fs.existsSync(srcSkills)) {
     for (const skillName of fs.readdirSync(srcSkills)) {
@@ -329,17 +341,42 @@ function main() {
     }
   }
 
-  // Copy from .agents/agents
-  const srcAgentsSkills = path.join(srcAgentsDir, "agents");
-  if (fs.existsSync(srcAgentsSkills)) {
-    for (const agentName of fs.readdirSync(srcAgentsSkills)) {
-      const srcAgentDir = path.join(srcAgentsSkills, agentName);
+  // 7.5. Process and copy agents to plugins/<name>/agents/ (Native Antigravity Custom Agents ONLY)
+  const destAgents = path.join(buildDir, "agents");
+  fs.mkdirSync(destAgents, { recursive: true });
+
+  const srcAgentsDirRoot = path.join(srcAgentsDir, "agents");
+  if (fs.existsSync(srcAgentsDirRoot)) {
+    for (const agentName of fs.readdirSync(srcAgentsDirRoot)) {
+      const srcAgentDir = path.join(srcAgentsDirRoot, agentName);
       if (fs.statSync(srcAgentDir).isDirectory()) {
-        const destAgentDir = path.join(destSkills, agentName);
-        if (fs.existsSync(destAgentDir)) {
-          fs.rmSync(destAgentDir, { recursive: true, force: true });
+        // Generate native Custom Agent Markdown file in build/agents/<agent-name>.md
+        const skillMdPath = path.join(srcAgentDir, "SKILL.md");
+        if (fs.existsSync(skillMdPath)) {
+          const rawContent = fs.readFileSync(skillMdPath, "utf-8");
+          let agentMdContent = rawContent;
+
+          // Parse YAML frontmatter to enrich with mainAgent and subagent flags
+          if (rawContent.startsWith("---")) {
+            const secondDelimiter = rawContent.indexOf("---", 3);
+            if (secondDelimiter !== -1) {
+              const frontmatter = rawContent.substring(3, secondDelimiter);
+              const body = rawContent.substring(secondDelimiter + 3);
+
+              let newFrontmatter = frontmatter.trimEnd();
+              if (!newFrontmatter.includes("mainAgent:")) {
+                newFrontmatter += "\nmainAgent: true";
+              }
+              if (!newFrontmatter.includes("subagent:")) {
+                newFrontmatter += "\nsubagent: true";
+              }
+              agentMdContent = `---${newFrontmatter}\n---${body}`;
+            }
+          }
+
+          const targetAgentFile = path.join(destAgents, `${agentName}.md`);
+          fs.writeFileSync(targetAgentFile, agentMdContent, "utf-8");
         }
-        fs.cpSync(srcAgentDir, destAgentDir, { recursive: true });
       }
     }
   }

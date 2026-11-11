@@ -1,48 +1,39 @@
-# Service / Worker: Codebase AST Indexer & Dependency Engine
+# Service: Codebase Indexer Engine
 
 [⬅ Back to Feature Catalog](../../FEATURES.md)
 
-## 1. Trigger & Scheduling Matrix
+## 1. Functional Scope & Business Triggers
 
-| Process / Job Name            | Trigger Mechanism        | Frequency / Event Source                                     | Idempotency Key / Lock               |
-| :---------------------------- | :----------------------- | :----------------------------------------------------------- | :----------------------------------- |
-| **Workspace Indexing**        | MCP Tool Call / HTTP API | On-demand via `index_repository` or `POST /api/indexer/sync` | Repository Name (`IndexerRepo.name`) |
-| **Dependency Graph Fetch**    | HTTP API                 | `GET /api/indexer/graph?repo=<name>`                         | Repo UUID                            |
-| **Blast Radius Impact Query** | HTTP API                 | `GET /api/indexer/impact?file=<path>&repo=<name>`            | Target File Path                     |
+| Business Capability             | Trigger Actor / Event             | Trigger Condition                                     | Operational Safety Guard                         |
+| :------------------------------ | :-------------------------------- | :---------------------------------------------------- | :----------------------------------------------- |
+| **Workspace Topology Indexing** | AI Agent Task Execution           | At the start of a coding task on a new repository     | Restricts scope to repository directory boundary |
+| **Manual Workspace Resync**     | Engineer clicks "Sync Repository" | Following large merges or major architectural changes | Per-repository lock preventing duplicate scans   |
+| **Incremental File Watcher**    | Local Workspace File Event        | When files are saved or modified during development   | 500ms debounce to bundle rapid sequential edits  |
 
 ---
 
-## 2. Business Flow & Processing Pipeline
+## 2. Business Flow: Incremental Structural Extraction
 
-### Process: Repository AST Parsing & Dependency Indexing
+```mermaid
+flowchart TD
+    A["Agent or engineer triggers repository index"] --> B["Compute content fingerprint for every source file"]
+    B --> C{"Has content fingerprint changed?"}
+    C -- No --> D["Skip parsing to preserve processing capacity"]
+    C -- Yes --> E["Parse syntax structure and extract definitions"]
+    E --> F["Extract business docstrings, functions, interfaces and classes"]
+    F --> G["Resolve cross-module references and dependency links"]
+    G --> H["Update full workspace dependency topology"]
+    H --> I["Refresh semantic search index for engineering team"]
+```
 
-#### A. Trigger & Pre-conditions
+### Business Rules & Extraction Standards
 
-- **Trigger**: Developer or agent invokes `index_repository(repo_path, repo_name)` or sends payload to `/api/indexer/sync`.
-- **Pre-condition**: Repository directory exists and contains parseable TypeScript/JavaScript source files.
+#### A. Incremental Delta Strategy
 
-#### B. Step-by-Step Execution Flow
+- Unchanged files are skipped during scanning to preserve system responsiveness.
+- References to deleted files are immediately pruned to guarantee that dependency maps reflect current reality without phantom imports.
 
-1. **Repository Registration**:
-   - Upserts `IndexerRepo` record in PostgreSQL with current sync timestamp.
-2. **File Scanning & Hash Calculation**:
-   - Recursively traverses project workspace, ignoring `node_modules`, `.git`, `.next`, `dist`, and build output directories.
-   - Computes MD5 content hash for each source file.
-3. **AST Parsing & Symbol Extraction**:
-   - Uses TypeScript AST parser to extract top-level declarations:
-     - `class` declarations
-     - `function` declarations
-     - `variable` and `const` declarations / exports
-   - Records character/line ranges (e.g. `1:0-15:20`).
-4. **Import / Export Resolution & Link Construction**:
-   - Analyzes `import` and `export from` AST statements.
-   - Resolves relative paths (`./`, `../`) and path aliases (`@/*`).
-   - Inserts directed dependency tuples into `IndexerDependency` linking `dependentFileId` $\to$ `dependencyFileId` with specific imported `symbolName` if applicable.
-5. **Impact Traversal (Blast Radius)**:
-   - When queried, recursively performs breadth-first / depth-first search on `IndexerDependency` where `dependencyFileId` matches the modified file.
-   - Computes topological distance (Depth 1 = Direct importer, Depth 2+ = Transitive consumer).
+#### B. Semantic Business Extraction
 
-#### C. Side Effects & External Integrations
-
-- **Database**: Upserts `IndexerRepo`, `IndexerFile`, `IndexerSymbol`, and `IndexerDependency` records.
-- **Cache**: Invalidation of cached dependency trees in memory.
+- In addition to structural relationships, the engine extracts domain docstrings and comments to help AI agents explain underlying business logic rather than pure syntax.
+- Modules with excessive inward dependencies are flagged as high-risk architectural bottlenecks.

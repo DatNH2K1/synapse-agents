@@ -1,44 +1,59 @@
-# Module: The Gate (Memory Curation & Conflict Resolution)
+# Module: The Gate (Memory Curation & Proposal Review)
 
 [⬅ Back to Feature Catalog](../../FEATURES.md)
 
-## 1. Screen: The Gate (`/gate`)
+## 1. Screen: The Gate Review Workspace (`/gate`)
 
-### A. UI Elements & Action Matrix
+### A. Actors & Business Objectives
 
-| Element Name                  | Component Type                         | Visibility / Conditions                 | Interaction & Business Flow                                                                                                                    |
-| :---------------------------- | :------------------------------------- | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tab Switcher**              | Segmented Control                      | Always visible                          | Toggles between **Review Gate** (`pendingUpdates` queue) and **Evolution History** (`EvolutionTimeline`).                                      |
-| **Pending Proposal Counter**  | Badge Indicator                        | Visible on Gate Tab                     | Shows total count of pending memory proposals awaiting human or automated review.                                                              |
-| **Proposal Card**             | Interactive Container (`ProposalCard`) | Visible per pending proposal            | Displays proposal label, category section tag, date, similarity match badge, and extracted markdown content preview.                           |
-| **"Approve" Action Button**   | Primary Button (Green)                 | Enabled on Proposal Card                | Calls `POST /api/gate` with `{ id, action: "APPROVE" }`. Promotes node to `APPROVED` / `BETA` tier and triggers real-time broadcast.           |
-| **"Reject" Action Button**    | Secondary Button (Red)                 | Enabled on Proposal Card                | Calls `POST /api/gate` with `{ id, action: "REJECT" }`. Transitions node to `REJECTED` status.                                                 |
-| **"Compare & Merge" Button**  | Action Button (Indigo)                 | Enabled when similar active nodes exist | Opens `ComparisonModal` showing side-by-side diff between proposed node and existing active knowledge nodes.                                   |
-| **"Merge with Master" Flow**  | Action Modal (`MergeModal`)            | Triggered on synthesis initiation       | Calls `POST /api/gate/synthesize` to generate AI-synthesized label, unified content, and merge rationale.                                      |
-| **Tag Intersection Selector** | Multi-select Pill Group                | Visible in `MergeModal`                 | Allows reviewer to customize and pick tags from the intersection/union of source nodes.                                                        |
-| **"Confirm Merge" Action**    | Modal Submit Button                    | Enabled in `MergeModal`                 | Calls `POST /api/gate/merge`. Archives source nodes, creates consolidated unified node in `APPROVED` tier, and enqueues embedding calculation. |
-| **Evolution Timeline Search** | Search Input                           | Visible on Evolution Tab                | Filters audit logs by label, proposal ID, or reason keyword.                                                                                   |
-| **Status Filter Selector**    | Select / Pill Filter                   | Visible on Evolution Tab                | Filters timeline logs by `ALL`, `APPROVED`, `REJECTED`, or `ARCHIVE`.                                                                          |
-| **"Undo" Action Button**      | Reversal Button                        | Visible on active log entries           | Calls `POST /api/gate` with `{ id, action: "UNDO", type }`. Restores previous node status and invalidates cache.                               |
+- **Primary Actors**: Tech Leads, Project Administrators, Curation Agents.
+- **Business Goal**: Validate quality of knowledge submitted by AI agents, resolve domain conflicts, prevent duplicate entries, and synthesize atomic lessons into authoritative knowledge crystals.
 
-### B. Business & User Flows
+### B. UI Elements & Business Action Matrix
 
-#### Flow 1.1: Human Approval & Synthesis Merge Flow
+| UI Element                    | Interaction Type        | Visibility / Conditions              | Business Behavior & Rules                                                                                            |
+| :---------------------------- | :---------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| **Pending Proposal Queue**    | Card List               | Visible when proposals await review  | Displays submitted candidate lessons with author attribution, targeted scope, taxonomy tags, and summary of changes. |
+| **"Synthesize All" Action**   | Primary Action Button   | Enabled when $\ge 2$ proposals exist | Uses semantic clustering to aggregate related proposals into consolidated draft syntheses.                           |
+| **"Run Sleep Cycle" Trigger** | Secondary Action Button | Always available                     | Manually triggers the background consolidation cycle, decay evaluation, and garbage collection.                      |
+| **Side-by-Side Diff Modal**   | Inspection Dialog       | On clicking "Review & Merge"         | Displays side-by-side comparison between the current approved knowledge baseline and proposed modifications.         |
+| **"Approve & Merge" Action**  | Confirmation Button     | Inside Diff Modal                    | Certifies that knowledge meets quality standards; commits revision and increments the node version lineage.          |
+| **"Reject Proposal" Action**  | Destructive Button      | On each proposal card                | Flags proposal as rejected; mandates entering a business justification to provide feedback for future iterations.    |
+| **Knowledge Evolution Log**   | Vertical Timeline       | Always visible                       | Chronologically traces creation, revision, merge, and rejection history of each knowledge node.                      |
+| **"Undo Merge" Action**       | Rollback Button         | Visible within 7-day grace window    | Allows administrators to safely revert an approved merge if defects or conflicts are discovered post-approval.       |
 
-1. Reviewer navigates to `/gate` and views pending proposals.
-2. If similarity score against active knowledge is high (e.g. $\ge 50\%$), reviewer clicks **"Compare & Merge"**.
-3. System invokes `POST /api/gate/synthesize` with candidate node IDs.
-4. Gemini AI model analyzes differences, consolidates overlapping advice, resolves conflicting conventions, and suggests a unified label and markdown content.
-5. Reviewer validates the synthesized result in `MergeModal`, adjusts tag associations, and clicks **"Confirm Merge"**.
-6. Backend transaction atomically:
-   - Creates new consolidated `Node` with status `APPROVED`.
-   - Links selected tags via `NodeTag`.
-   - Transitions source node proposals and redundant active nodes to `ARCHIVE`.
-   - Enqueues embedding vector recalculation.
-   - Emits real-time SSE event to all connected dashboard clients.
+---
 
-#### Flow 1.2: Reversal / Undo Flow
+## 2. Lifecycle State Machine & Business Rules
 
-1. Reviewer switches to **Evolution History** tab.
-2. Selects an entry previously approved or rejected.
-3. Clicks **"Undo"**. Backend reverses the status change in `Node` and updates audit trail logs.
+```mermaid
+stateDiagram-v2
+    [*] --> PROPOSED : Agent submits candidate lesson
+    PROPOSED --> SYNTHESIZING : "Synthesize All" triggered
+    SYNTHESIZING --> PROPOSED : Consolidated draft created
+    PROPOSED --> MERGED : Human expert approves
+    PROPOSED --> REJECTED : Human expert rejects with reason
+    MERGED --> REVERTED : Rollback within 7-day window
+    MERGED --> CRYSTALLIZED : Efficacy >= 10 & 90 days unchanged
+    PROPOSED --> EXPIRED : Temporary session note inactive > 30 days
+```
+
+### State Transition Matrix
+
+| Initial State | Target State   | Actor / Event        | Pre-conditions (Guards)                           | Business Side Effects                                                                     |
+| :------------ | :------------- | :------------------- | :------------------------------------------------ | :---------------------------------------------------------------------------------------- |
+| `PROPOSED`    | `MERGED`       | Tech Lead approves   | Must have at least one valid categorization tag   | Node becomes active baseline; version increments; system-wide real-time update broadcast. |
+| `PROPOSED`    | `REJECTED`     | Tech Lead rejects    | Rejection reason must be provided                 | Rejection justification recorded in audit log for feedback learning.                      |
+| `MERGED`      | `REVERTED`     | Tech Lead rolls back | Action must occur within 7 calendar days          | Restores previous version content; logs rollback event in audit timeline.                 |
+| `MERGED`      | `CRYSTALLIZED` | Automated REM Worker | Efficacy count $\ge 10$ and unchanged for 90 days | Promoted to permanent crystal; protected from automated decay and pruning.                |
+
+---
+
+## 3. Proposal Governance & Taxonomy Rules
+
+- **Mandatory Categorization Policy**: Every proposal must declare at least one standardized section category (_Mistakes to Avoid, Optimized Techniques, Specialized Conventions, or User Personas_).
+- **Scope Hierarchy**:
+  - `GLOBAL`: Universal engineering standard enforced across all repositories.
+  - `PROJECT`: Scoped strictly to the specific project boundary matching the repository root.
+  - `SESSION`: Ephemeral in-flight observation during a single task.
+- **De-duplication Policy**: Submissions matching identical text signatures to active nodes are automatically rejected.

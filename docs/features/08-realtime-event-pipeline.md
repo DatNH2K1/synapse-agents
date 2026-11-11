@@ -1,33 +1,48 @@
-# Service / Worker: Real-time Event Pipeline & SSE State Sync
+# Service: Realtime Event Pipeline
 
 [⬅ Back to Feature Catalog](../../FEATURES.md)
 
-## 1. Trigger & Scheduling Matrix
+## 1. Functional Scope & Channel Subscriptions
 
-| Process / Job Name                 | Trigger Mechanism      | Frequency / Event Source                                    | Idempotency Key / Lock                  |
-| :--------------------------------- | :--------------------- | :---------------------------------------------------------- | :-------------------------------------- |
-| **SSE Client Stream Connection**   | HTTP GET Request       | Persistent connection to `GET /api/updates`                 | Connection Keep-Alive / Heartbeat (30s) |
-| **State Mutation Event Broadcast** | Internal Event Emitter | Triggered on memory proposal, approval, rejection, or merge | In-memory subscriber broadcast          |
+| Channel / Stream            | Transport Mechanism | Subscribed Consumers               | Connection & Heartbeat Policy        |
+| :-------------------------- | :------------------ | :--------------------------------- | :----------------------------------- |
+| **System Event Stream**     | Server-Sent Events  | Web UI (Gate, Dashboard, Settings) | Continuous 15s keep-alive ping       |
+| **Internal Domain Emitter** | Event Emitter Bus   | Background Workers & Portal Core   | Process-scoped singleton message bus |
 
 ---
 
-## 2. Business Flow & Architecture
+## 2. Business Event Taxonomy & Side Effects
+
+| Event Name              | Originating Actor / Source | Business Payload Summary                      | Client / Consumer Side Effect                      |
+| :---------------------- | :------------------------- | :-------------------------------------------- | :------------------------------------------------- |
+| **`proposal_created`**  | Agent via `propose_memory` | New proposal identifier, title, author, scope | Increments pending counter badge in header nav     |
+| **`proposal_merged`**   | Expert in The Gate         | Proposal identifier, target node, title       | Updates curation queue and refreshes metrics       |
+| **`proposal_rejected`** | Expert in The Gate         | Proposal identifier, rejection justification  | Removes card from active queue without full reload |
+| **`indexer_progress`**  | Repository Indexer Engine  | Repository slug, progress percentage          | Advances progress bar on Dependency Graph Explorer |
+| **`sleep_cycle_done`**  | REM Sleep Cycle Worker     | Consolidated count, new crystal creations     | Dispatches toast notification on active dashboards |
+
+---
+
+## 3. Communication Sequence & Connection Resilience
 
 ```mermaid
-flowchart LR
-    A[Agent / MCP Tool Call] -->|Propose / Approve / Merge| B[Event Service]
-    C[REM Sleep Cycle Worker] -->|Consolidate / Auto-Approve| B
-    B -->|Emit Event| D[SSE Stream Controller /api/updates]
-    D -->|Push Update Frame| E[Browser RealtimeProvider]
-    E -->|Trigger| F[Next.js router.refresh]
-    F -->|Re-render UI| G[Dashboard / The Gate / Atlas]
+sequenceDiagram
+    autonumber
+    actor Client as Web Browser Dashboard
+    participant SSE as Event Stream Endpoint
+    participant Bus as Internal Domain Event Bus
+    participant Worker as Background Workers / Agents
+
+    Client->>SSE: Open event stream connection
+    SSE-->>Client: Connection established
+    loop Every 15 seconds
+        SSE-->>Client: Heartbeat keep-alive ping
+    end
+    Worker->>Bus: Emit domain event (e.g. proposal_created)
+    Bus->>SSE: Forward event to active subscribers
+    SSE-->>Client: Push realtime event notification
+    Client->>Client: Revalidate affected view data with zero page flicker
 ```
 
-### A. Step-by-Step Execution Flow
-
-1. When any mutation occurs in the backend (e.g. `eventService.emit("node_created", node)` or `eventService.emit("node_updated", node)`):
-   - The event payload is serialized to SSE format (`data: JSON.stringify(payload)\n\n`).
-   - Dispatched to all active HTTP response streams held open by clients connected to `/api/updates`.
-2. On the frontend, `RealtimeProvider` receives the message via `EventSource`.
-3. Registered callbacks in `TheGate` and `OverviewPageContent` trigger an asynchronous `router.refresh()`.
-4. Next.js server components re-execute their database queries in the background and reconcile the DOM with zero page flicker.
+- **Reconnection Policy**: If the streaming connection drops due to network fluctuations, clients automatically retry with exponential backoff.
+- **Resource Cleanup**: Client disconnections instantly remove listeners from the event bus to prevent resource leakage.

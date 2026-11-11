@@ -7,32 +7,77 @@ This rule outlines the protocol for generating, modularizing, and updating the p
 
 ---
 
-### 1. Distinction from Changelog
+### 1. Distinction from Changelog & Code Implementation
 
-| Document                                 | Nature                                      | Purpose                                                                                                                                                            |
-| :--------------------------------------- | :------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`CHANGELOG.md`**                       | **Delta / Historical Log**                  | Documents _what changed_ in a specific branch/commit compared to `develop`/`main`.                                                                                 |
-| **`FEATURES.md` + `docs/features/*.md`** | **Living State / Functional Specification** | Documents _how the system currently operates_, including UI buttons/flows, backend API contracts, cron triggers, queue processors, and background state mutations. |
+| Document                                 | Nature                                | Purpose                                                                                                                                                                         |
+| :--------------------------------------- | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`CHANGELOG.md`**                       | **Delta / Historical Log**            | Documents _what changed_ in a specific branch/commit compared to `develop`/`main`.                                                                                              |
+| **Code / Tech Specs**                    | **Implementation Details**            | Contains language syntax, class names, internal functions, ORM queries, and ephemeral code structures.                                                                          |
+| **`FEATURES.md` + `docs/features/*.md`** | **Functional Business Specification** | Documents _how the business operates from a functional perspective_: actors, user intents, business rules, lifecycle state machines, pre/post-conditions, and data constraints. |
+
+---
+
+### 2. Functional Business Specification Principle (CRITICAL)
+
+> [!IMPORTANT]
+> **BUSINESS-FIRST, ZERO IMPLEMENTATION COUPLING**:
+> Feature specifications must document **Business Capabilities and Logic Rules**, NEVER internal code implementations.
+>
+> - **FORBIDDEN in Feature Specs**:
+>   - Hardcoded code filenames (e.g. `event-service.ts`, `instrumentation.ts`, `page_content.tsx`).
+>   - Framework-specific component names (e.g. `TiltCard`, `StatCard`, `OverviewCharts`).
+>   - Raw database queries or internal ORM expressions (e.g. `SELECT * FROM orders WHERE...`, `prisma.knowledgeNode.findMany`).
+>   - Internal variable names, private methods, or ephemeral library bindings.
+> - **MANDATORY Focus**:
+>   - **Actors & Goals**: Who initiates the action (e.g. End User, Admin, Automated Scheduler, External Payment Gateway) and what outcome they achieve.
+>   - **Business Rules & Validation Policies**: Exact constraints (e.g. "Proposals must contain at least one categorization tag", "Cluster threshold $\ge 82\%$", "Account locked after 5 failed attempts within 15 minutes").
+>   - **Functional State Transitions**: Clear lifecycle states (e.g. `PENDING` -> `APPROVED` -> `CRYSTALLIZED`).
+>   - **Pre-conditions & Post-conditions**: Requirements before execution and business side effects upon completion (e.g. "Restores inventory stock and notifies customer via email").
+>   - **Business Fallbacks & Edge Cases**: What happens on failure or conflict from a business standpoint.
 
 ---
 
 ### 2. Architecture & File Placement (Hub-and-Spoke)
 
-All feature specification documents MUST be located at the root of the target repository containing the `.git` directory:
+Depending on the workspace and repository topology (Monorepo vs. Multi-repo), the placement of `FEATURES.md` and `docs/features/` is defined as follows:
+
+#### A. Multi-Repo Architecture (e.g., `project-fe/`, `project-be/`)
+
+When the project is split into independent Git repositories for frontend and backend (each having its own `.git` directory) located within the same root workspace:
+
+- **Centralize specifications in `*-docs` (or `project-docs/`) co-located alongside the FE and BE repositories**: All business logic, end-to-end flows, UI matrices, and API contracts MUST be managed centrally within this dedicated shared documentation directory to prevent duplicate documentation across individual repos.
+- Directory Structure:
+
+```text
+<workspace-root>/
+├── project-fe/                       # Frontend Git repository (independent .git)
+├── project-be/                       # Backend Git repository (independent .git)
+└── project-docs/                     # Central documentation repository or directory
+    ├── FEATURES.md                   # Master Index: High-level overview & Module Table of Contents
+    └── docs/
+        └── features/                 # Detailed modular specifications
+            ├── 01-authentication.md  # Combined UI + Auth API + Session Lifecycle
+            ├── 02-order-management.md# Combined UI Checkout + Order APIs + Webhooks
+            └── ...
+```
+
+#### B. Monorepo Architecture (Single `.git` Root)
+
+When frontend, backend, and background packages reside within a single unified Git repository (only one `.git` directory at the root level):
+
+- Place `FEATURES.md` and `docs/features/` directly at the repository root co-located with `.git`:
 
 ```text
 <repository-git-root>/
-├── FEATURES.md                       # Master Index: High-level overview & Module Table of Contents
+├── .git/
+├── apps/ (or frontend/, backend/)
+├── FEATURES.md                       # Master Index co-located with .git
 └── docs/
     └── features/                     # Detailed modular specifications
-        ├── 01-authentication.md      # UI screens, OAuth callbacks, Session/JWT lifecycle
-        ├── 02-order-management.md    # Checkout UI, order state machine, payment webhooks
-        ├── 03-billing-worker.md      # Cron jobs, recurring invoice generation, dunning flow
-        ├── 04-inventory-sync.md      # SQS/Kafka consumers, third-party ERP sync, stock updates
+        ├── 01-authentication.md
+        ├── 02-order-management.md
         └── ...
 ```
-
-- **Monorepo / Independent Sub-repositories**: If the workspace contains multiple independent Git repositories (e.g. `frontend/`, `backend/`, `worker/`), maintain `FEATURES.md` and `docs/features/` directly within each respective `.git` root.
 
 ---
 
@@ -68,6 +113,14 @@ The root `FEATURES.md` categorizes both User-Facing (FE) and Background/Core (BE
 | **03. Billing Worker**     | Cron (0 0 1 \* \*), Auto-generate monthly invoices & charge card | `Stable` | [docs/features/03-billing-worker.md](./docs/features/03-billing-worker.md)         |
 | **04. Order Expiry Queue** | Redis Delay Queue (30 mins), Auto-cancels unpaid orders          | `Stable` | [docs/features/04-order-expiry-queue.md](./docs/features/04-order-expiry-queue.md) |
 | **05. Payment Webhooks**   | Stripe `payment_intent.succeeded` event listener & state sync    | `Stable` | [docs/features/05-payment-webhooks.md](./docs/features/05-payment-webhooks.md)     |
+
+### 📊 Data Processing, Storage & Cross-Cutting Specifications
+
+| Area / Module             | Scope & Governance Coverage                                   | Status   | Detailed Specification                                                   |
+| :------------------------ | :------------------------------------------------------------ | :------- | :----------------------------------------------------------------------- |
+| **06. Order Data Import** | Excel/CSV batch import, row validation & field transformation | `Stable` | [docs/features/06-order-import.md](./docs/features/06-order-import.md)   |
+| **07. RBAC & Security**   | Role permissions, Multi-tenant scoping & API rate limits      | `Stable` | [docs/features/07-rbac-security.md](./docs/features/07-rbac-security.md) |
+| **08. Asset Storage**     | S3 pre-signed upload, CDN caching & async virus inspection    | `Stable` | [docs/features/08-asset-storage.md](./docs/features/08-asset-storage.md) |
 ```
 
 ---
@@ -112,42 +165,185 @@ The root `FEATURES.md` categorizes both User-Facing (FE) and Background/Core (BE
 
 [⬅ Back to Feature Catalog](../../FEATURES.md)
 
-## 1. Trigger & Scheduling Matrix
+## 1. Functional Scope & Business Triggers
 
-| Process / Job Name            | Trigger Mechanism   | Frequency / Event Source         | Idempotency Key / Lock                   |
-| :---------------------------- | :------------------ | :------------------------------- | :--------------------------------------- |
-| **Auto-Cancel Unpaid Orders** | Queue Job / Polling | Every 5 mins / Redis delay queue | `lock:order:cancel:{order_id}` (TTL 30s) |
-| **Nightly Invoice Sync**      | Cron Schedule       | Daily at 02:00 UTC (`0 2 * * *`) | Database Advisory Lock / Redis lock      |
-| **Stripe Webhook Consumer**   | HTTP Webhook        | `POST /api/v1/webhooks/stripe`   | Stripe Event ID (`evt_...`)              |
+| Process / Capability               | Business Trigger            | Frequency / Event Source                  | Concurrency & Business Guard                       |
+| :--------------------------------- | :-------------------------- | :---------------------------------------- | :------------------------------------------------- |
+| **Auto-Cancel Unpaid Orders**      | Payment timeout exceeded    | Every 5 mins / System schedule            | Prevents concurrent cancellation on the same order |
+| **Nightly Billing & Invoice Run**  | Accounting closing schedule | Daily at 02:00 UTC                        | Single active run per billing cycle                |
+| **Payment Status Synchronization** | External payment confirmed  | Webhook event: `payment_intent.succeeded` | Idempotent: Ignore duplicate transaction events    |
 
 ---
 
-## 2. Business Flow & Processing Pipeline
+## 2. Business Flow & Processing Rules
 
-### Process: [Process / Job Name]
+### Process: [Process Name]
 
-#### A. Trigger & Pre-conditions
+#### A. Pre-conditions & Candidate Qualification
 
-- **Trigger**: Order remains in `PENDING_PAYMENT` state after 30 minutes.
-- **Pre-condition**: No active webhook lock for incoming payment.
+- **Qualification Criteria**: Orders in status `PENDING_PAYMENT` where creation timestamp is older than 30 minutes without confirmed transaction.
+- **Batching & Throughput**: Processes in slices of 500 records to prevent business processing bottlenecks.
+- **Transaction Boundary**: Atomic per order (failure on one order does not prevent processing others).
 
-#### B. Step-by-Step Execution Flow
+#### B. Step-by-Step Functional Workflow
 
-1. **Query Candidates**: Worker fetches orders where `status = 'PENDING_PAYMENT'` AND `created_at <= NOW() - INTERVAL '30 MINUTES'`.
-2. **State Transition**: Updates `orders.status` to `CANCELLED` with `cancellation_reason = 'PAYMENT_TIMEOUT'`.
-3. **Inventory Release**: Emits event `inventory.release` with item SKU & quantity to replenish available stock.
-4. **Customer Notification**: Pushes email notification template `ORDER_AUTO_CANCELLED` to notification queue.
+1. **Identify Qualified Candidates**: Retrieve unpaid orders exceeding the timeout window.
+2. **Transition Order Lifecycle**: Update status from `PENDING_PAYMENT` to `CANCELLED` with explicit business reason `PAYMENT_TIMEOUT`.
+3. **Restock Inventory**: Restore reserved stock back to active warehouse availability for each line item.
+4. **Notify Customer**: Dispatch cancellation summary to customer communication channel.
 
-#### C. Side Effects & External Integrations
+#### C. Business Side Effects & Cross-Domain Notifications
 
-- **Database**: Updates `orders` table and `order_logs` audit trail.
-- **Cache/Queue**: Publishes event to Kafka/RabbitMQ/Redis `order-events` channel.
-- **Third-Party APIs**: Calls ERP inventory endpoint `POST /erp/inventory/restock`.
+- **Audit Trail**: Append cancellation record to customer order history.
+- **Warehouse Operations**: Trigger stock replenishment notification.
+- **Customer Relationship**: Alert account manager if high-tier enterprise order cancels.
 
-#### D. Failure Handling, Retries & Dead Letter Queue (DLQ)
+#### D. Resilience, Fallback & Exception Scenarios
 
-- **Retry Policy**: Exponential backoff (3 attempts: 5s, 30s, 2m).
-- **DLQ**: After 3 failed attempts, routes payload to `dlq:orders:cancellation` and sends Slack alert to `#eng-alerts`.
+- **Idempotency Guarantee**: Submitting multiple cancellation signals for the same order must yield a neutral success without double restocking.
+- **Retry & Recovery**: Retry transient communication errors up to 3 times before escalating to operational review queue.
+```
+
+---
+
+#### C. Format for Data Processing, Import & Export Modules (`docs/features/<import-export-module>.md`)
+
+```markdown
+# Module: [Data Import / Export Service Name]
+
+[⬅ Back to Feature Catalog](../../FEATURES.md)
+
+## 1. Overview & Constraints
+
+- **File Types Supported**: `.xlsx`, `.csv` (Max size: 25MB).
+- **Processing Mode**: Asynchronous via BullMQ/Celery worker (Background job with progress polling via SSE/WebSocket).
+- **Upsert / Duplicate Strategy**: Match by `customer_email` + `order_code`. If exists -> `UPDATE`, else -> `INSERT`.
+
+---
+
+## 2. Data Mapping & Transformation Matrix
+
+### A. Import Specification (File to Database Mapping)
+
+| Source Column / Header       | Target DB Field             | Target Type    | Required | Parsing, Validation & Transformation Logic                                 | Fallback / Default Value      |
+| :--------------------------- | :-------------------------- | :------------- | :------- | :------------------------------------------------------------------------- | :---------------------------- |
+| **`Order Code`** (Col A)     | `orders.order_code`         | `VARCHAR(64)`  | Yes      | Trim whitespace, uppercase. Regex: `^ORD-[0-9]{8}$`.                       | Reject record if invalid      |
+| **`Customer Email`** (Col B) | `users.email`               | `VARCHAR(255)` | Yes      | Lowercase, trim. Validate email regex. Check existing user ID.             | Reject record if invalid      |
+| **`Order Date`** (Col C)     | `orders.ordered_at`         | `TIMESTAMP`    | No       | Parse format `DD/MM/YYYY HH:mm`. Convert timezone to UTC.                  | Fallback: `CURRENT_TIMESTAMP` |
+| **`Item Total`** (Col D)     | `orders.total_amount_cents` | `BIGINT`       | Yes      | Parse currency string, multiply by 100, round to integer. Reject if `< 0`. | Reject record if invalid      |
+| **`Notes`** (Col E)          | `orders.customer_notes`     | `TEXT`         | No       | Sanitize HTML entities, truncate to 500 chars.                             | Fallback: `NULL`              |
+
+### B. Export Specification (Database to File Mapping)
+
+| Output Header Name    | Source Entity / Query Expression  | Formatting & Serialization Rules                                     |
+| :-------------------- | :-------------------------------- | :------------------------------------------------------------------- | --- | --- | ---------------- | ------------------------ |
+| **`Mã đơn hàng`**     | `orders.order_code`               | Raw string                                                           |
+| **`Khách hàng`**      | `users.first_name                 |                                                                      | ' ' |     | users.last_name` | Title case concatenation |
+| **`Trạng thái`**      | `orders.status`                   | Enum mapping: `PAID` -> `"Đã thanh toán"`, `CANCELLED` -> `"Đã hủy"` |
+| **`Tổng tiền (VND)`** | `orders.total_amount_cents / 100` | Number format: `#,##0`                                               |
+| **`Ngày tạo`**        | `orders.created_at`               | Format string: `YYYY-MM-DD HH:mm:ss` (Local timezone GMT+7)          |
+
+---
+
+## 3. Error Handling & Partial Failure Strategy
+
+- **Row-Level Validation**: Collect all row errors and export an error report file (`error_rows_download.xlsx`) with an appended `Error Details` column.
+- **Transaction Rollback Policy**: Partial commit allowed (`skip_and_log_error`), unless `all_or_nothing = true` flag is passed in request.
+```
+
+---
+
+#### D. Format for Integration, Webhooks & State Machines (`docs/features/<integration-state-module>.md`)
+
+````markdown
+# Module: [Integration / State Machine Name]
+
+[⬅ Back to Feature Catalog](../../FEATURES.md)
+
+## 1. State Machine Definition (Lifecycle & Transitions)
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT : Create Order
+    DRAFT --> PENDING_PAYMENT : Submit Order
+    PENDING_PAYMENT --> PROCESSING : Webhook payment_intent.succeeded
+    PENDING_PAYMENT --> CANCELLED : 30min Timeout / User Cancel
+    PROCESSING --> COMPLETED : Shipment Delivered
+    PROCESSING --> REFUNDED : Admin Refund
+    COMPLETED --> [*]
+    CANCELLED --> [*]
+    REFUNDED --> [*]
+```
+````
+
+### State Transition Matrix
+
+| From State        | To State          | Trigger Event / Actor   | Guard / Pre-condition           | Side Effects & Mutations              |
+| :---------------- | :---------------- | :---------------------- | :------------------------------ | :------------------------------------ |
+| `DRAFT`           | `PENDING_PAYMENT` | User clicks Checkout    | Cart has items, stock > 0       | Lock inventory, create payment intent |
+| `PENDING_PAYMENT` | `PROCESSING`      | Stripe Webhook Callback | Valid signature, amount matches | Mark order paid, notify warehouse     |
+| `PENDING_PAYMENT` | `CANCELLED`       | Expiry Worker / User    | Order not yet paid              | Release stock, send cancel email      |
+
+---
+
+## 2. Inbound & Outbound Webhook Contracts
+
+- **Webhook Provider**: Stripe / Third-Party Logistics
+- **Signature Verification**: HMAC-SHA256 with header `Stripe-Signature` and webhook signing secret.
+- **Idempotency Guarantee**: Event ID stored in `processed_webhook_events(event_id)` table with `UNIQUE` constraint. Returns HTTP 200 immediately if event was already processed.
+- **Payload Schema & Field Mapping**:
+  - `payload.data.object.id` -> `orders.payment_intent_id`
+  - `payload.data.object.amount_received` -> verify matches `orders.total_amount_cents`
+
+````
+
+---
+
+#### E. Format for Access Control, Rate Limiting & Multi-Tenancy (`docs/features/<rbac-security-module>.md`)
+
+```markdown
+# Security & Access Control: [Module / Domain Name]
+
+[⬅ Back to Feature Catalog](../../FEATURES.md)
+
+## 1. Role-Based Access Control (RBAC) & Permission Matrix
+
+| Endpoint / Action | Allowed Roles | Required Permissions / Scopes | Tenant Scoping Rule | Unauthorized Behavior |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET /api/v1/orders` | `Owner`, `Admin`, `Support` | `orders:read` | Scoped to caller's `org_id` | HTTP 403 Forbidden |
+| `POST /api/v1/orders/:id/refund` | `Owner`, `Admin` | `orders:refund` | Scoped to caller's `org_id` | HTTP 403 Forbidden |
+| `GET /api/v1/users/export` | `Owner` | `users:export`, `mfa_verified` | Scoped to caller's `org_id` | HTTP 403 (Requires active MFA) |
+
+## 2. Rate Limiting, Quotas & Throttling
+- **Public / Auth Endpoints** (e.g. `POST /api/v1/auth/login`, `POST /api/v1/auth/otp`):
+  - Threshold: Max 5 requests per 60 seconds per IP + Username tuple.
+  - Exceeded Response: HTTP 429 Too Many Requests (`Retry-After: 60`).
+- **Heavy / Bulk Processing** (e.g. Export / Batch Reports):
+  - Threshold: Max 2 concurrent export jobs per organization.
+  - Cooldown: 1 request every 5 minutes per user.
+````
+
+---
+
+#### F. Format for Media, File Storage & CDN Lifecycle (`docs/features/<storage-assets-module>.md`)
+
+```markdown
+# Storage & Media Assets: [Module Name]
+
+[⬅ Back to Feature Catalog](../../FEATURES.md)
+
+## 1. Upload Flow & Lifecycle Matrix
+
+| Asset Category        | Max Size | Allowed MIME Types                      | Storage Target (S3/GCS/Local)         | Pre-signed URL / Direct?            | CDN / Retention Policy                       |
+| :-------------------- | :------- | :-------------------------------------- | :------------------------------------ | :---------------------------------- | :------------------------------------------- |
+| **User Avatar**       | 2MB      | `image/jpeg`, `image/png`, `image/webp` | `s3://app-assets/avatars/{user_id}/`  | Direct Pre-signed PUT (Expires: 5m) | Public CloudFront, Cache 30d                 |
+| **Invoice PDF**       | 10MB     | `application/pdf`                       | `s3://app-private/invoices/{org_id}/` | Server-generated & piped            | Private S3, Pre-signed GET (Expires: 15m)    |
+| **Temporary Exports** | 50MB     | `application/vnd.openxmlformats`        | `s3://app-temp/exports/{uuid}.xlsx`   | Worker upload via IAM role          | Auto-delete via S3 Lifecycle rule (TTL: 24h) |
+
+## 2. Virus Scanning & Async Post-Processing
+
+- **Scan Trigger**: S3 `ObjectCreated:*` event triggers Lambda / ClamAV container.
+- **Image Variants**: Auto-generate thumbnails (128x128, 512x512 webp) via background worker before updating `users.avatar_url`.
 ```
 
 ---

@@ -14,10 +14,6 @@ export enum McpToolName {
   INDEX_REPOSITORY = "index_repository",
   QUERY_REPOSITORY_INDEX = "query_repository_index",
 
-  // Docs Seeker Tools
-  FETCH_ONLINE_DOCS = "fetch_online_docs",
-  ANALYZE_LLMS_TXT = "analyze_llms_txt",
-
   // Context Analyzer Tools
   ANALYZE_CONTEXT_HEALTH = "analyze_context_health",
   CALCULATE_CONTEXT_BUDGET = "calculate_context_budget",

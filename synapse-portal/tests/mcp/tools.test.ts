@@ -16,9 +16,6 @@ import {
   generateAiArt,
   searchAiArtPrompts,
 } from "@/mcp/ai_artist";
-import {
-  analyzeLlmsTxt,
-} from "@/mcp/docs_seeker";
 import { createMcpServer } from "@/mcp/server";
 
 describe("MCP Tools Suite", () => {
@@ -63,23 +60,6 @@ describe("MCP Tools Suite", () => {
     it("should analyze context health on valid JSON or return error on missing file", () => {
       const result = analyzeContextHealth("non-existent-context.json", 128000);
       expect(result).toContain("Error: File not found");
-    });
-  });
-
-  describe("Docs Seeker Tool", () => {
-    it("should parse llms.txt and categorize urls by priority", () => {
-      const sampleLlms = `
-# Next.js Documentation
-- [Overview and Getting Started](https://nextjs.org/docs)
-- [API Reference](https://nextjs.org/docs/api-reference)
-- [Community Examples](https://github.com/vercel/next.js/examples)
-      `;
-      const result = analyzeLlmsTxt(sampleLlms);
-      const parsed = JSON.parse(result);
-      expect(parsed.total_urls).toBe(3);
-      expect(parsed.distribution.high_priority).toBe(1);
-      expect(parsed.distribution.medium_priority).toBe(1);
-      expect(parsed.distribution.low_priority).toBe(1);
     });
   });
 

@@ -2,7 +2,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerMemoryTools } from "./memory";
 import { registerBetterAuthTools } from "./better_auth";
 import { registerRepoIndexerTools } from "./repo_indexer";
-import { registerDocsSeekerTools } from "./docs_seeker";
 import { registerContextAnalyzerTools } from "./context_analyzer";
 import { registerCopywritingTools } from "./copywriting";
 import { registerDistillatorTools } from "./distillator";
@@ -18,7 +17,6 @@ export function createMcpServer(): McpServer {
   registerMemoryTools(server);
   registerBetterAuthTools(server);
   registerRepoIndexerTools(server);
-  registerDocsSeekerTools(server);
   registerContextAnalyzerTools(server);
   registerCopywritingTools(server);
   registerDistillatorTools(server);

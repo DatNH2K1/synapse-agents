@@ -24,13 +24,13 @@ This skill is the primary knowledge acquisition engine of Synapse. It intelligen
 
 When executing any layer, you MUST refer to the registry table below and **only load/query the sub-skills whose Activation Criteria match the current task context** (Lazy/Conditional Loading pattern) to prevent token waste and context bloat. Do NOT load sub-skills whose activation criteria are not met.
 
-| Sub-Skill               | Portable Path                                                            | Primary Role                                    | Activation Criteria                                        |
-| :---------------------- | :----------------------------------------------------------------------- | :---------------------------------------------- | :--------------------------------------------------------- |
-| **Docs Seeker**         | [`./references/docs-seeker/SKILL.md`](./references/docs-seeker/SKILL.md) | Fetches and processes library docs (llm.txt)    | Triggered when researching APIs, libraries, or syntaxes    |
-| **Repomix**             | [`./references/repomix/SKILL.md`](./references/repomix/SKILL.md)         | Gathers and packs codebase files for context    | Triggered when analyzing local codebase structures         |
-| **Technical Deep-dive** | [`./references/technical/SKILL.md`](./references/technical/SKILL.md)     | Deep analysis of libraries, stacks, performance | Triggered on structural/technical analysis requests        |
-| **Domain Research**     | [`./references/domain/SKILL.md`](./references/domain/SKILL.md)           | Business domain analysis, terms dictionary      | Triggered when analyzing a new business vertical or domain |
-| **Market Intelligence** | [`./references/market/SKILL.md`](./references/market/SKILL.md)           | Competitor scanning and product benchmarking    | Triggered during feature and market analysis               |
+| Sub-Skill               | Portable Path                                                            | Primary Role                                      | Activation Criteria                                        |
+| :---------------------- | :----------------------------------------------------------------------- | :------------------------------------------------ | :--------------------------------------------------------- |
+| **Docs Seeker**         | [`./references/docs-seeker/SKILL.md`](./references/docs-seeker/SKILL.md) | Fetches and queries library docs via Context7 MCP | Triggered when researching APIs, libraries, or syntaxes    |
+| **Repomix**             | [`./references/repomix/SKILL.md`](./references/repomix/SKILL.md)         | Gathers and packs codebase files for context      | Triggered when analyzing local codebase structures         |
+| **Technical Deep-dive** | [`./references/technical/SKILL.md`](./references/technical/SKILL.md)     | Deep analysis of libraries, stacks, performance   | Triggered on structural/technical analysis requests        |
+| **Domain Research**     | [`./references/domain/SKILL.md`](./references/domain/SKILL.md)           | Business domain analysis, terms dictionary        | Triggered when analyzing a new business vertical or domain |
+| **Market Intelligence** | [`./references/market/SKILL.md`](./references/market/SKILL.md)           | Competitor scanning and product benchmarking      | Triggered during feature and market analysis               |
 
 ---
 
@@ -38,7 +38,7 @@ When executing any layer, you MUST refer to the registry table below and **only 
 
 ### 1. External & Technical Research
 
-- When researching external APIs or frameworks, you **MUST** run `docs-seeker` to search for available `llm.txt` or `llm-common.txt` documentation before using general web search.
+- When researching external APIs or frameworks, you **MUST** run `docs-seeker` with Context7 MCP (`resolve-library-id`, `query-docs`) before using general web search. If not installed, recommend installing the Context7 plugin.
 
 ### 2. Local Codebase Analysis
 
@@ -66,7 +66,7 @@ Before submitting research summaries:
 
 ### Context & Docs
 
-- [Docs Seeker (LLM.txt Support)](./references/docs-seeker/SKILL.md)
+- [Docs Seeker (Context7 MCP Support)](./references/docs-seeker/SKILL.md)
 - [Repomix (Codebase Packing)](./references/repomix/SKILL.md)
 
 ## USAGE

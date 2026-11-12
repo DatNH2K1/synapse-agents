@@ -75,7 +75,6 @@
   "gemini_embedding_model": "Mô hình Embedding",
   "gemini_api": "Gemini API",
   "stitch_api": "Stitch API",
-  "context7_api": "Context7 API",
   "set": "Đã thiết lập",
   "not_set": "Chưa thiết lập",
   "node_growth": "Sự tăng trưởng tri thức",

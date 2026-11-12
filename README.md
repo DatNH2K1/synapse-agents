@@ -63,7 +63,7 @@ Copy the example environment file and configure the values:
 cp .env.example .env
 ```
 
-Ensure you set your `CONTEXT7_API_KEY` and `STITCH_API_KEY` (if using Stitch integrations).
+Ensure you set your `STITCH_API_KEY` (if using Stitch integrations). Context7 documentation lookup is powered directly via the official Context7 MCP plugin.
 
 ### 2. Run the Web App & Database
 

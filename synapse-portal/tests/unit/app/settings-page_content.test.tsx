@@ -61,7 +61,6 @@ describe("app/(dashboard)/settings/page_content", () => {
       is_active: true,
     },
     stitch: { is_set: true },
-    context7: { is_set: false },
   };
   const systemConfig = {
     rem_mode_enabled: "true",

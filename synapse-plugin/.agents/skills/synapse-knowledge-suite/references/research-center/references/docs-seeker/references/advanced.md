@@ -80,9 +80,9 @@ git checkout v[version] or tags/[version]
 
 ## Rate Limiting
 
-**If hitting API limits:**
+**If hitting API limits or requesting enhanced library docs:**
 
-- Use CONTEXT7_API_KEY from .env
+- Use dedicated Context7 MCP tools (`resolve-library-id`, `query-docs`)
 - Implement exponential backoff
 - Cache results in session
 - Batch requests where possible

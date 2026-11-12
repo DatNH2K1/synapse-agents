@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## feat/migrate-docs-seeker-to-context7-mcp
+
+### Overview
+
+- Removed obsolete `docs_seeker` MCP module (`fetch_online_docs`, `analyze_llms_txt`) and removed all `CONTEXT7_API_KEY` configurations.
+- Transitioned documentation lookups to prioritize direct native Context7 MCP tools (`resolve-library-id`, `query-docs`) and added installation guidance for the marketplace plugin when not present.
+
+### BUSINESS LOGIC
+
+- Replaced internal custom docs seeker tool logic with native Context7 MCP tools (`resolve-library-id`, `query-docs`).
+- Synapse agents now dynamically call Context7 MCP directly for documentation lookup and proactively instruct users to install the Context7 plugin (`antigravity-plugins-partners/plugin/context7`) if missing.
+
+### IMPROVEMENTS
+
+- Purged `synapse-portal/mcp/docs_seeker` directory, removing unneeded code maintenance and custom fetch scrapers.
+- Updated MCP server tools count and manifests down to 17 standard tools.
+- Refactored `synapse-research-center` skill and feature specs to route documentation queries exclusively via Context7 MCP.
+
+### CONFIGURATION CHANGES
+
+- Removed `CONTEXT7_API_KEY` from `synapse-portal/.env` and `synapse-portal/.env.example`.
+- Removed `context7` property from `getAIConfig()` in `synapse-portal/lib/config.ts`, Settings page UI, and i18n localization dictionaries (`en.json`, `vi.json`).
+- Removed `fetch_online_docs` and `analyze_llms_txt` from `McpToolName` enum, MCP manifest, and handler dispatch.
+- Removed docs seeker unit tests from `tests/mcp/tools.test.ts`.
+
 ## feat/feature_guideline
 
 ### Overview

@@ -1,61 +1,45 @@
 ---
 name: synapse-research-center
-description: Search library/framework documentation via llms.txt (context7.com). Use for API docs, GitHub repository analysis, technical documentation lookup, latest library features.
+description: Search library/framework documentation via official Context7 MCP (resolve-library-id, query-docs). Use for API docs, GitHub repository analysis, technical documentation lookup, latest library features.
 argument-hint: "[library-name] [topic]"
 ---
 
-# Documentation Discovery via MCP Tools
+# Documentation Discovery via Context7 MCP
 
 ## Overview
 
-**MCP-first** documentation discovery using llms.txt standard.
-
-Use MCP tools instead of manual URL construction or local Node script invocation.
+**MCP-first** documentation discovery powered directly by Context7 MCP tools.
 
 ## Primary Workflow
 
 **ALWAYS execute in this order:**
 
-1. **FETCH documentation:**
-   Call the MCP tool `fetch_online_docs(query)`.
-   _Example:_ `fetch_online_docs(query="How do I use date picker in shadcn?")`
+1. **RESOLVE Library ID:**
+   Call the Context7 MCP tool `resolve-library-id(libraryName, query)`.
+   _Example:_ `resolve-library-id(libraryName="shadcn", query="date picker")`
 
-2. **ANALYZE results (if multiple URLs returned):**
-   Call the MCP tool `analyze_llms_txt(content)` passing the fetched text.
+2. **QUERY Documentation:**
+   Call the Context7 MCP tool `query-docs(libraryId, query)` using the resolved library ID.
+   _Example:_ `query-docs(libraryId="/shadcn-ui/ui", query="date picker")`
 
-These tools handle URL construction, fallback chains, and categorizing/budgeting automatically.
-
-## MCP Tools
-
-**`fetch_online_docs`** - Retrieve documentation
-
-- Constructs context7.com URLs automatically
-- Handles fallback: topic → general → error
-- Outputs llms.txt content or error message
-
-**`analyze_llms_txt`** - Process llms.txt
-
-- Categorizes URLs (critical/important/supplementary)
-- Recommends agent distribution (1 agent, 3 agents, 7 agents, phased)
-- Returns JSON with strategy
+3. **INSTALLATION Check & Fallback:**
+   - If Context7 MCP is not yet installed or available in your environment, proactively guide the user to install the Context7 plugin from the Agent Marketplace catalog:
+     ```text
+     <plugin-card catalog-id="antigravity-plugins-partners/plugin/context7"></plugin-card>
+     ```
 
 ## Execution Principles
 
-1. **MCP Tools first** - Call MCP tools instead of running local scripts or manual web fetching
-2. **Zero-token overhead** - Execution runs via MCP server without local context bloat
-3. **Automatic fallback** - MCP tool handles topic → general → error chains automatically
-4. **Agent distribution** - Use `analyze_llms_txt` recommendation for multi-agent workloads
+1. **Direct MCP Tools** - Call Context7 MCP tools (`resolve-library-id`, `query-docs`) directly instead of legacy local fetch scripts or custom wrappers.
+2. **Zero-Token Overhead** - Exact version-specific documentation is fetched directly into context without needing local API key management.
+3. **Always Suggest Install if Missing** - If the tool is not present, display the plugin installation card immediately.
 
 ## Quick Start
 
-**Topic query:** "How do I use date picker in shadcn?"
+**Lookup Query:** "How do I use date picker in shadcn?"
 
-- Call `fetch_online_docs(query="How do I use date picker in shadcn?")`
-
-**General query:** "Documentation for Next.js"
-
-- Call `fetch_online_docs(query="Documentation for Next.js")`
-- Call `analyze_llms_txt(content="...")` using the result.
+1. Call `resolve-library-id(libraryName="shadcn", query="date picker")`
+2. Call `query-docs(libraryId="/shadcn-ui/ui", query="date picker")`
 
 ## Environment
 

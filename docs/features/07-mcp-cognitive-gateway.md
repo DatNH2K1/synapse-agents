@@ -23,7 +23,6 @@
 | **`list_nodes`**             | Knowledge Suite  | Browses active knowledge nodes filtered by domain scopes          | Tags, scope level, project slug       |
 | **`index_repository`**       | Code Discovery   | Builds dependency graph and symbol map for a repository           | Working path, repository slug         |
 | **`query_repository_index`** | Code Discovery   | Queries symbols and callers without loading full raw files        | Repository slug, symbol, file         |
-| **`fetch_online_docs`**      | Docs Seeker      | Retrieves authoritative library documentation dynamically         | Library identifier, topic             |
 | **`analyze_context_health`** | Context Analyzer | Audits token budget consumption to prevent context degradation    | Active prompt text, model limit       |
 | **`generate_ai_art`**        | Design Suite     | Generates visual artwork briefs and design system specifications  | Prompt description, stylistic theme   |
 

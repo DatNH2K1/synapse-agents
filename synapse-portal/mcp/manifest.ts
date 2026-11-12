@@ -105,24 +105,6 @@ export const TOOLS_MANIFEST: McpToolManifestItem[] = [
     },
   },
   {
-    name: McpToolName.FETCH_ONLINE_DOCS,
-    description: "Fetch documentation (like llms.txt) for a given query or library from context7.com.",
-    inputSchema: {
-      type: "object",
-      properties: { query: { type: "string" } },
-      required: ["query"],
-    },
-  },
-  {
-    name: McpToolName.ANALYZE_LLMS_TXT,
-    description: "Analyze llms.txt content to extract URLs and prioritize them.",
-    inputSchema: {
-      type: "object",
-      properties: { content: { type: "string" } },
-      required: ["content"],
-    },
-  },
-  {
     name: McpToolName.ANALYZE_CONTEXT_HEALTH,
     description: "Analyze the health, token utilization, and degradation risk of an agent's context.",
     inputSchema: {

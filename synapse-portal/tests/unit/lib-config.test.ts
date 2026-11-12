@@ -6,7 +6,6 @@ describe("lib/config", () => {
     const config = getAIConfig();
     expect(config).toHaveProperty("gemini");
     expect(config).toHaveProperty("stitch");
-    expect(config).toHaveProperty("context7");
     expect(typeof config.gemini.is_active).toBe("boolean");
   });
 

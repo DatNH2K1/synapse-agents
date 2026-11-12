@@ -53,8 +53,5 @@ export function getAIConfig() {
     stitch: {
       is_set: !!process.env.STITCH_API_KEY,
     },
-    context7: {
-      is_set: !!process.env.CONTEXT7_API_KEY,
-    },
   };
 }

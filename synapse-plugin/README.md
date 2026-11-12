@@ -24,7 +24,7 @@ The build script inside the portal workspace (`synapse-portal/scripts/build_anti
 
 1. Cleaning the build target at `build/antigravity`.
 2. Configuring native TypeScript MCP server from `synapse-portal`.
-3. Extracting credentials from `.env` to build `mcp_config.json` with appropriate API keys (`CONTEXT7_API_KEY`, `STITCH_API_KEY`).
+3. Extracting credentials from `.env` to build `mcp_config.json` with appropriate API keys (`STITCH_API_KEY`).
 4. Copying rules from `.agents/rules/` to `build/antigravity/rules/`.
 5. Merging `.agents/skills/` and `.agents/agents/` into a single unified `skills/` directory under `build/antigravity/skills/`.
 6. Generating the master `plugin.json` manifest.

@@ -75,7 +75,6 @@
   "gemini_embedding_model": "Gemini Embedding Model",
   "gemini_api": "Gemini API",
   "stitch_api": "Stitch API",
-  "context7_api": "Context7 API",
   "set": "Set",
   "not_set": "Not Set",
   "node_growth": "Knowledge Growth",

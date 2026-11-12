@@ -29,7 +29,6 @@ export default function SettingsPageContent({
   aiConfig: {
     gemini: { model: string; embedding_model: string; is_active: boolean };
     stitch: { is_set: boolean };
-    context7: { is_set: boolean };
   };
   systemConfig: Record<string, string>;
 }) {
@@ -233,11 +232,6 @@ export default function SettingsPageContent({
                     {
                       label: t("stitch_api"),
                       isSet: aiConfig.stitch.is_set,
-                      className: "",
-                    },
-                    {
-                      label: t("context7_api"),
-                      isSet: aiConfig.context7.is_set,
                       className: "",
                     },
                     {

@@ -5,7 +5,6 @@ export * from "./server";
 export * from "./memory";
 export * from "./better_auth";
 export * from "./repo_indexer";
-export * from "./docs_seeker";
 export * from "./context_analyzer";
 export * from "./copywriting";
 export * from "./distillator";

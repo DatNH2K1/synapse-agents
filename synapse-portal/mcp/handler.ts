@@ -8,7 +8,6 @@ import {
   listNodes,
 } from "./memory";
 import { initBetterAuth } from "./better_auth";
-import { fetchOnlineDocs, analyzeLlmsTxt } from "./docs_seeker";
 import {
   analyzeContextHealth,
   calculateContextBudget,
@@ -56,10 +55,6 @@ export async function handleToolCall(
         String(args.repo_name || ""),
         args.file_path ? String(args.file_path) : undefined,
       );
-    case McpToolName.FETCH_ONLINE_DOCS:
-      return await fetchOnlineDocs(String(args.query || ""));
-    case McpToolName.ANALYZE_LLMS_TXT:
-      return analyzeLlmsTxt(String(args.content || ""));
     case McpToolName.ANALYZE_CONTEXT_HEALTH:
       return analyzeContextHealth(
         String(args.context_file_path || ""),
